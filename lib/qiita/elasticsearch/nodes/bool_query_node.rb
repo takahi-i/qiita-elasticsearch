@@ -4,7 +4,7 @@ module Qiita
   module Elasticsearch
     module Nodes
       class BoolQueryNode
-        # @param [Qiita::Elasticsearch::Tokens] tokens
+        # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
         # @param [Array<String>, nil] fields Available field names
         def initialize(tokens, fields: nil)
           @fields = fields

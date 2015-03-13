@@ -1,5 +1,4 @@
 require "qiita/elasticsearch/tokenizer"
-require "qiita/elasticsearch/tokens"
 
 module Qiita
   module Elasticsearch
@@ -10,9 +9,9 @@ module Qiita
       end
 
       # @param [String] query_string Raw query string given from search user.
-      # @return [Qiita::Elasticsearch::Tokens]
+      # @return [Array<Qiita::Elasticsearch::Token>]
       def parse(query_string)
-        Tokens.new(tokenizer.tokenize(query_string))
+        tokenizer.tokenize(query_string)
       end
 
       private

@@ -23,6 +23,38 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       described_class.new(properties)
     end
 
+    context "with empty string" do
+      let(:query_string) do
+        ""
+      end
+
+      it do
+        is_expected.to eq(
+          "query" => {
+            "ids" => {
+              "values" => [],
+            },
+          },
+        )
+      end
+    end
+
+    context "with no token" do
+      let(:query_string) do
+        " "
+      end
+
+      it do
+        is_expected.to eq(
+          "query" => {
+            "ids" => {
+              "values" => [],
+            },
+          },
+        )
+      end
+    end
+
     context "with positive token" do
       let(:query_string) do
         "a"

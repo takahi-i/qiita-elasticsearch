@@ -1,4 +1,5 @@
 require "qiita/elasticsearch/nodes/bool_query_node"
+require "qiita/elasticsearch/nodes/null_node"
 require "qiita/elasticsearch/parser"
 
 module Qiita
@@ -14,10 +15,15 @@ module Qiita
       # @param [String] query_string Raw query string given from search user
       # @return [Hash]
       def build(query_string)
-        Nodes::BoolQueryNode.new(
-          parser.parse(query_string),
-          fields: @fields,
-        ).to_hash
+        tokens = parser.parse(query_string)
+        if tokens.size.zero?
+          Nodes::NullNode.new.to_hash
+        else
+          Nodes::BoolQueryNode.new(
+            tokens,
+            fields: @fields,
+          ).to_hash
+        end
       end
 
       private
