@@ -6,10 +6,14 @@ module Qiita
         @tokens = tokens
       end
 
-      # @todo This is a dummy implementation to a valid object.
+      # @todo
       # @return [Hash]
       def to_hash
-        {}
+        {
+          "match" => {
+            "_all" => @tokens.first.to_s,
+          },
+        }
       end
     end
   end

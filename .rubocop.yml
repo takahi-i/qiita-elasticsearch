@@ -12,3 +12,6 @@ Style/RegexpLiteral:
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
+
+Style/TrailingComma:
+  Enabled: false

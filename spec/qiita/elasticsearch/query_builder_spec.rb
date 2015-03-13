@@ -7,7 +7,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
   describe "#build" do
     subject do
-      query_builder.build(query_string)
+      query_builder.build(query_string).to_hash
     end
 
     let(:constructor_parameters) do
@@ -22,6 +22,14 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       "a"
     end
 
-    it { is_expected.to be_a Qiita::Elasticsearch::Query }
+    context "with simple query string" do
+      it do
+        is_expected.to eq(
+          "match" => {
+            "_all" => query_string,
+          },
+        )
+      end
+    end
   end
 end
