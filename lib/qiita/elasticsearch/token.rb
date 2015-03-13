@@ -50,15 +50,6 @@ module Qiita
       def term
         @quoted_term || @term
       end
-
-      # @return [Hash]
-      def to_match_query_hash
-        {
-          "match" => {
-            "_all" => term,
-          },
-        }
-      end
     end
   end
 end

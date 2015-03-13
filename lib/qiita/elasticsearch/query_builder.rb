@@ -1,18 +1,19 @@
+require "qiita/elasticsearch/nodes/root_node"
 require "qiita/elasticsearch/parser"
 
 module Qiita
   module Elasticsearch
     class QueryBuilder
-      # @param [Hash] properties Properties to configure the query buider's behavior
-      def initialize(properties = {})
-        @properties = properties
+      # @param [Array<String>, nil] fields Available field names
+      def initialize(fields: nil)
+        @fields = fields
       end
 
-      # @todo Not implemented yet
       # @param [String] query_string Raw query string given from search user
-      # @return [Qiita::Elasticsearch::Query]
+      # @return [Hash]
       def build(query_string)
-        parser.parse(query_string)
+        tokens = parser.parse(query_string)
+        Nodes::RootNode.new(tokens, fields: @fields).to_hash
       end
 
       private
