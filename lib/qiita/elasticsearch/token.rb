@@ -11,9 +11,12 @@ module Qiita
         @token_string = token_string
       end
 
-      # @note Override
-      def to_s
-        @token_string.dup
+      def must?
+        !field_name.nil?
+      end
+
+      def must_not?
+        negative?
       end
 
       # @return [true, false] True if this token is for negative filter
@@ -43,6 +46,15 @@ module Qiita
       #                        This
       def quoted?
         !!@quoted
+      end
+
+      def should?
+        !must? && !must_not?
+      end
+
+      # @note Override
+      def to_s
+        @token_string.dup
       end
     end
   end

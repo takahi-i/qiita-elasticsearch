@@ -1,4 +1,4 @@
-require "qiita/elasticsearch/nodes/match_query_node"
+require "qiita/elasticsearch/nodes/token_node"
 
 module Qiita
   module Elasticsearch
@@ -12,18 +12,19 @@ module Qiita
         end
 
         def to_hash
-          hash = { "bool" => {} }
-          if @tokens.positive_tokens.size.nonzero?
-            hash["bool"]["must"] = @tokens.positive_tokens.map do |token|
-              Nodes::TokenNode.new(token, fields: @fields).to_hash
-            end
-          end
-          if @tokens.negative_tokens.size.nonzero?
-            hash["bool"]["must_not"] = @tokens.negative_tokens.map do |token|
-              Nodes::TokenNode.new(token, fields: @fields).to_hash
-            end
-          end
-          hash
+          {
+            "bool" => {
+              "must" => @tokens.select(&:must?).map do |token|
+                Nodes::TokenNode.new(token, fields: @fields).to_hash
+              end,
+              "must_not" => @tokens.select(&:must_not?).map do |token|
+                Nodes::TokenNode.new(token, fields: @fields).to_hash
+              end,
+              "should" => @tokens.select(&:should?).map do |token|
+                Nodes::TokenNode.new(token, fields: @fields).to_hash
+              end,
+            },
+          }
         end
       end
     end
