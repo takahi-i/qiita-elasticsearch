@@ -14,14 +14,12 @@ module Qiita
         @token_string.dup
       end
 
-      private
-
       # @return [true, false] True if this token is for negative filter
       # @note `Ruby -Perl`
       #             ^^^^^
       #             This
       def negative?
-        !@minus.nil?
+        !positive?
       end
 
       # @return [true, false] True if this token is for OR filter
@@ -30,6 +28,11 @@ module Qiita
       #            This
       def or?
         @token_string.downcase == "or"
+      end
+
+      # @return [true, false] Opposite of #negative?
+      def positive?
+        @minus.nil?
       end
 
       # @return [true, false] True if this token is for phrase matching
@@ -46,6 +49,15 @@ module Qiita
       #   tokenizer.tokenize('"Ruby"').first.term #=> "Ruby"
       def term
         @quoted_term || @term
+      end
+
+      # @return [Hash]
+      def to_match_query_hash
+        {
+          "match" => {
+            "_all" => term,
+          },
+        }
       end
     end
   end

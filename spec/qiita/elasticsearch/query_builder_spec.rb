@@ -1,10 +1,6 @@
 require "qiita/elasticsearch/query_builder"
 
 RSpec.describe Qiita::Elasticsearch::QueryBuilder do
-  describe ".new" do
-    it { is_expected.to be_a described_class }
-  end
-
   describe "#build" do
     subject do
       query_builder.build(query_string).to_hash
@@ -18,15 +14,81 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       described_class.new(constructor_parameters)
     end
 
-    let(:query_string) do
-      "a"
-    end
+    context "with positive token" do
+      let(:query_string) do
+        "a"
+      end
 
-    context "with simple query string" do
       it do
         is_expected.to eq(
           "match" => {
-            "_all" => query_string,
+            "_all" => "a",
+          },
+        )
+      end
+    end
+
+    context "with negative token" do
+      let(:query_string) do
+        "-a"
+      end
+
+      it do
+        is_expected.to eq(
+          "bool" => {
+            "must_not" => [
+              "match" => {
+                "_all" => "a",
+              },
+            ],
+          },
+        )
+      end
+    end
+
+    context "with multiple positive tokens" do
+      let(:query_string) do
+        "a b"
+      end
+
+      it do
+        is_expected.to eq(
+          "bool" => {
+            "must" => [
+              {
+                "match" => {
+                  "_all" => "a",
+                },
+              },
+              {
+                "match" => {
+                  "_all" => "b",
+                },
+              },
+            ],
+          },
+        )
+      end
+    end
+
+    context "with positive token and negative token" do
+      let(:query_string) do
+        "a -b"
+      end
+
+      it do
+        is_expected.to eq(
+          "bool" => {
+            "must" => [
+              "match" => {
+                "_all" => "a",
+              },
+            ],
+            "must_not" => [
+              "match" => {
+                "_all" => "b",
+              },
+            ],
           },
         )
       end
