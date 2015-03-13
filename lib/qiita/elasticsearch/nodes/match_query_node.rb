@@ -2,11 +2,11 @@ module Qiita
   module Elasticsearch
     module Nodes
       class MatchQueryNode
-        # @param [String] term
+        # @param [Qiita::Elasticsearch::Token] token
         # @param [Array<String>, nil] fields Available field names
-        def initialize(term, fields: nil)
+        def initialize(token, fields: nil)
           @fields = fields
-          @term = term
+          @token = token
         end
 
         # @return [Hash] match query or multi_match query
@@ -14,14 +14,14 @@ module Qiita
           if @fields.nil?
             {
               "match" => {
-                "_all" => @term,
+                "_all" => @token.term,
               }
             }
           else
             {
               "multi_match" => {
                 "fields" => @fields,
-                "query" => @term,
+                "query" => @token.term,
               },
             }
           end

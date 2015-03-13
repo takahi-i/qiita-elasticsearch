@@ -15,12 +15,12 @@ module Qiita
           hash = { "bool" => {} }
           if @tokens.positive_tokens.size.nonzero?
             hash["bool"]["must"] = @tokens.positive_tokens.map do |token|
-              Nodes::MatchQueryNode.new(token.term, fields: @fields).to_hash
+              Nodes::TokenNode.new(token, fields: @fields).to_hash
             end
           end
           if @tokens.negative_tokens.size.nonzero?
             hash["bool"]["must_not"] = @tokens.negative_tokens.map do |token|
-              Nodes::MatchQueryNode.new(token.term, fields: @fields).to_hash
+              Nodes::TokenNode.new(token, fields: @fields).to_hash
             end
           end
           hash

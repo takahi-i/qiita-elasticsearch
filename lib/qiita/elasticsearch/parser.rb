@@ -4,9 +4,9 @@ require "qiita/elasticsearch/tokens"
 module Qiita
   module Elasticsearch
     class Parser
-      # @param [Array<String>, nil] fields Available field names
-      def initialize(fields: nil)
-        @fields = fields
+      # @param [Array<String>, nil] filterable_fields
+      def initialize(filterable_fields: nil)
+        @filterable_fields = filterable_fields
       end
 
       # @param [String] query_string Raw query string given from search user.
@@ -18,7 +18,7 @@ module Qiita
       private
 
       def tokenizer
-        @tokenizer ||= Tokenizer.new
+        @tokenizer ||= Tokenizer.new(filterable_fields: @filterable_fields)
       end
     end
   end

@@ -5,8 +5,10 @@ module Qiita
   module Elasticsearch
     class QueryBuilder
       # @param [Array<String>, nil] fields Available field names
-      def initialize(fields: nil)
+      # @param [Array<String>, nil] filterable_fields
+      def initialize(fields: nil, filterable_fields: nil)
         @fields = fields
+        @filterable_fields = filterable_fields
       end
 
       # @param [String] query_string Raw query string given from search user
@@ -19,7 +21,7 @@ module Qiita
       private
 
       def parser
-        @parser ||= Parser.new
+        @parser ||= Parser.new(filterable_fields: @filterable_fields)
       end
     end
   end

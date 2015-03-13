@@ -9,8 +9,14 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:fields) do
     end
 
+    let(:filterable_fields) do
+    end
+
     let(:properties) do
-      { fields: fields }
+      {
+        fields: fields,
+        filterable_fields: filterable_fields,
+      }
     end
 
     let(:query_builder) do
@@ -20,6 +26,20 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     context "with positive token" do
       let(:query_string) do
         "a"
+      end
+
+      it do
+        is_expected.to eq(
+          "match" => {
+            "_all" => "a",
+          },
+        )
+      end
+    end
+
+    context "with double-quoted positive token" do
+      let(:query_string) do
+        '"a"'
       end
 
       it do
@@ -99,7 +119,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with fields property" do
       let(:fields) do
-        ["title"]
+        ["tag"]
       end
 
       let(:query_string) do
@@ -112,6 +132,81 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             "fields" => fields,
             "query" => "a",
           },
+        )
+      end
+    end
+
+    context "with filterable_fields property and token including field name" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "tag:a"
+      end
+
+      it do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "tag" => "a",
+              },
+            },
+            "query" => {
+              "match_all" => {},
+            },
+          },
+        )
+      end
+    end
+
+    context "with token including unknown field name" do
+      let(:query_string) do
+        "tag:a"
+      end
+
+      it do
+        is_expected.to eq(
+          "match" => {
+            "_all" => "tag:a",
+          },
+        )
+      end
+    end
+
+    context "with normal token and another token including known field name" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "a tag:b"
+      end
+
+      it do
+        is_expected.to eq(
+          "bool" => {
+            "must" => [
+              {
+                "match" => {
+                  "_all" => "a",
+                },
+              },
+              {
+                "filtered" => {
+                  "filter" => {
+                    "term" => {
+                      "tag" => "b",
+                    },
+                  },
+                  "query" => {
+                    "match_all" => {},
+                  },
+                },
+              },
+            ],
+          }
         )
       end
     end

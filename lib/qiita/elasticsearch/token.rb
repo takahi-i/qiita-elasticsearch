@@ -1,10 +1,12 @@
 module Qiita
   module Elasticsearch
     class Token
-      def initialize(field_name: nil, minus: nil, quoted_term: nil, term: nil, token_string: nil)
+      attr_reader :field_name, :term
+
+      def initialize(field_name: nil, minus: nil, quoted: nil, term: nil, token_string: nil)
         @field_name = field_name
         @minus = minus
-        @quoted_term = quoted_term
+        @quoted = quoted
         @term = term
         @token_string = token_string
       end
@@ -40,15 +42,7 @@ module Qiita
       #                   ^^^^^^^^^^^^^^^
       #                        This
       def quoted?
-        !@quoted_term.nil?
-      end
-
-      # @return [String] Term part of this token
-      # @example
-      #   tokenizer.tokenize("Ruby").first.term #=> "Ruby"
-      #   tokenizer.tokenize('"Ruby"').first.term #=> "Ruby"
-      def term
-        @quoted_term || @term
+        !!@quoted
       end
     end
   end
