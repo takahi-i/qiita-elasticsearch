@@ -1,3 +1,6 @@
+Lint/UnusedMethodArgument:
+  Enabled: false
+
 Metrics/LineLength:
   Max: 104
 
