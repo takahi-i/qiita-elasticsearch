@@ -65,11 +65,55 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with double-quoted positive token" do
       let(:query_string) do
-        '"a"'
+        '"a b"'
       end
 
-      it "returns same query with non-quoted one" do
-        is_expected.to eq query_builder.build("a")
+      it "returns match_phrase query" do
+        is_expected.to eq(
+          "match_phrase" => {
+            "_all" => "a b",
+          },
+        )
+      end
+    end
+
+    context "with double-quoted negative token" do
+      let(:query_string) do
+        '-"a b"'
+      end
+
+      it "returns must_not query with match_phrase query" do
+        is_expected.to eq(
+          "bool" => {
+            "must_not" => [
+              {
+                "match_phrase" => {
+                  "_all" => "a b",
+                },
+              },
+            ],
+          },
+        )
+      end
+    end
+
+    context "with double-quoted token with matchable field names" do
+      let(:matchable_fields) do
+        ["title"]
+      end
+
+      let(:query_string) do
+        '"a b"'
+      end
+
+      it "returns multi match query with phrase type" do
+        is_expected.to eq(
+          "multi_match" => {
+            "fields" => matchable_fields,
+            "query" => "a b",
+            "type" => "phrase",
+          },
+        )
       end
     end
 

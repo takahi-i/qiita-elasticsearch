@@ -13,17 +13,19 @@ module Qiita
         def to_hash
           if @matchable_fields.nil?
             {
-              "match" => {
+              @token.quoted? ? "match_phrase" : "match" => {
                 "_all" => @token.term,
               }
             }
           else
-            {
+            hash = {
               "multi_match" => {
                 "fields" => @matchable_fields,
                 "query" => @token.term,
               },
             }
+            hash["multi_match"]["type"] = "phrase" if @token.quoted?
+            hash
           end
         end
       end
