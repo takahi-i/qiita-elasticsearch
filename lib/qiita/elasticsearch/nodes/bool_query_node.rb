@@ -18,23 +18,21 @@ module Qiita
           when has_only_one_must_token?
             Nodes::TokenNode.new(must_tokens.first, matchable_fields: @matchable_fields).to_hash
           else
-            hash = { "bool" => {} }
-            unless must_tokens.empty?
-              hash["bool"]["must"] = must_tokens.map do |token|
-                Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
-              end
-            end
-            unless must_not_tokens.empty?
-              hash["bool"]["must_not"] = must_not_tokens.map do |token|
-                Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
-              end
-            end
-            unless should_tokens.empty?
-              hash["bool"]["should"] = should_tokens.map do |token|
-                Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
-              end
-            end
-            hash
+            {
+              "bool" => {
+                "must" => must_tokens.map do |token|
+                  Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
+                end,
+                "must_not" => must_not_tokens.map do |token|
+                  Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
+                end,
+                "should" => should_tokens.map do |token|
+                  Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
+                end,
+              }.reject do |key, value|
+                value.empty?
+              end,
+            }
           end
         end
 
