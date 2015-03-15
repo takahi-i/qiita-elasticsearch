@@ -6,7 +6,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       query_builder.build(query_string)
     end
 
-    let(:fields) do
+    let(:matchable_fields) do
     end
 
     let(:filterable_fields) do
@@ -14,8 +14,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     let(:properties) do
       {
-        fields: fields,
         filterable_fields: filterable_fields,
+        matchable_fields: matchable_fields,
       }
     end
 
@@ -140,7 +140,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with fields property" do
-      let(:fields) do
+      let(:matchable_fields) do
         ["tag"]
       end
 
@@ -151,7 +151,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       it "returns multi_match query" do
         is_expected.to eq(
           "multi_match" => {
-            "fields" => fields,
+            "fields" => matchable_fields,
             "query" => "a",
           },
         )

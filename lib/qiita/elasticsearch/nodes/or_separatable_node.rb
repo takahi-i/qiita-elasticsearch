@@ -6,9 +6,9 @@ module Qiita
     module Nodes
       class OrSeparatableNode
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
-        # @param [Array<String>, nil] fields Available field names
-        def initialize(tokens, fields: nil)
-          @fields = fields
+        # @param [Array<String>, nil] matchable_fields
+        def initialize(tokens, matchable_fields: nil)
+          @matchable_fields = matchable_fields
           @tokens = tokens
         end
 
@@ -19,7 +19,7 @@ module Qiita
           when 1
             Nodes::BoolQueryNode.new(
               tokens_grouped_by_or_token.first,
-              fields: @fields,
+              matchable_fields: @matchable_fields,
             ).to_hash
           else
             {
@@ -27,7 +27,7 @@ module Qiita
                 "should" => tokens_grouped_by_or_token.map do |tokens|
                   Nodes::BoolQueryNode.new(
                     tokens,
-                    fields: @fields,
+                    matchable_fields: @matchable_fields,
                   ).to_hash
                 end,
               },

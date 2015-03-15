@@ -5,10 +5,10 @@ require "qiita/elasticsearch/parser"
 module Qiita
   module Elasticsearch
     class QueryBuilder
-      # @param [Array<String>, nil] fields Available field names
+      # @param [Array<String>, nil] matchable_fields
       # @param [Array<String>, nil] filterable_fields
-      def initialize(fields: nil, filterable_fields: nil)
-        @fields = fields
+      def initialize(matchable_fields: nil, filterable_fields: nil)
+        @matchable_fields = matchable_fields
         @filterable_fields = filterable_fields
       end
 
@@ -21,7 +21,7 @@ module Qiita
         else
           Nodes::OrSeparatableNode.new(
             tokens,
-            fields: @fields,
+            matchable_fields: @matchable_fields,
           ).to_hash
         end
       end

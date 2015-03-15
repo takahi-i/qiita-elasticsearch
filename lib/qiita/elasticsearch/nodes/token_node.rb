@@ -6,9 +6,9 @@ module Qiita
     module Nodes
       class TokenNode
         # @param [Qiita::Elasticsearch::Token] token
-        # @param [Array<String>, nil] fields Available field names
-        def initialize(token, fields: nil)
-          @fields = fields
+        # @param [Array<String>, nil] matchable_fields
+        def initialize(token, matchable_fields: nil)
+          @matchable_fields = matchable_fields
           @token = token
         end
 
@@ -16,7 +16,7 @@ module Qiita
           if @token.field_name
             FilterQueryNode.new(@token).to_hash
           else
-            MatchQueryNode.new(@token, fields: @fields).to_hash
+            MatchQueryNode.new(@token, matchable_fields: @matchable_fields).to_hash
           end
         end
       end
