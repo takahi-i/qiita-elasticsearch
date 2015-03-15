@@ -13,14 +13,14 @@ module Qiita
 
         def to_hash
           case
-          when must_not_tokens.empty? && must_tokens.empty? && should_tokens.size == 1
+          when has_only_one_should_token?
             Nodes::TokenNode.new(should_tokens.first, matchable_fields: @matchable_fields).to_hash
-          when must_not_tokens.empty? && should_tokens.empty? && must_tokens.size == 1
+          when has_only_one_must_token?
             Nodes::TokenNode.new(must_tokens.first, matchable_fields: @matchable_fields).to_hash
           else
             hash = { "bool" => {} }
             unless must_tokens.empty?
-              hash["bool"]["must"] =  must_tokens.map do |token|
+              hash["bool"]["must"] = must_tokens.map do |token|
                 Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
               end
             end
@@ -39,6 +39,14 @@ module Qiita
         end
 
         private
+
+        def has_only_one_must_token?
+          must_not_tokens.empty? && should_tokens.empty? && must_tokens.size == 1
+        end
+
+        def has_only_one_should_token?
+          must_not_tokens.empty? && must_tokens.empty? && should_tokens.size == 1
+        end
 
         def must_tokens
           @must_tokens ||= @tokens.select(&:must?)
