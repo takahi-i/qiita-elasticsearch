@@ -1,5 +1,5 @@
-require "qiita/elasticsearch/nodes/bool_query_node"
 require "qiita/elasticsearch/nodes/null_node"
+require "qiita/elasticsearch/nodes/or_separatable_node"
 require "qiita/elasticsearch/parser"
 
 module Qiita
@@ -19,7 +19,7 @@ module Qiita
         if tokens.size.zero?
           Nodes::NullNode.new.to_hash
         else
-          Nodes::BoolQueryNode.new(
+          Nodes::OrSeparatableNode.new(
             tokens,
             fields: @fields,
           ).to_hash

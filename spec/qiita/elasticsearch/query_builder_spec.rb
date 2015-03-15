@@ -28,7 +28,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         ""
       end
 
-      it do
+      it "returns null query that matches with nothing" do
         is_expected.to eq(
           "query" => {
             "ids" => {
@@ -44,14 +44,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         " "
       end
 
-      it do
-        is_expected.to eq(
-          "query" => {
-            "ids" => {
-              "values" => [],
-            },
-          },
-        )
+      it "returns null query" do
+        is_expected.to eq query_builder.build("")
       end
     end
 
@@ -278,6 +272,77 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             ],
           },
         )
+      end
+    end
+
+    context "with tokens connected with OR token" do
+      let(:query_string) do
+        "a OR b"
+      end
+
+      it do
+        is_expected.to eq(
+          "bool" => {
+            "should" => [
+              {
+                "bool" => {
+                  "must" => [],
+                  "must_not" => [],
+                  "should" => [
+                    {
+                      "match" => {
+                        "_all" => "a",
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                "bool" => {
+                  "must" => [],
+                  "must_not" => [],
+                  "should" => [
+                    {
+                      "match" => {
+                        "_all" => "b",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        )
+      end
+    end
+
+    context "with only OR token" do
+      let(:query_string) do
+        "OR"
+      end
+
+      it "returns null query" do
+        is_expected.to eq query_builder.build("")
+      end
+    end
+
+    context "with malformed OR token" do
+      let(:query_string) do
+        "OR a"
+      end
+
+      it "ignores OR token" do
+        is_expected.to eq query_builder.build("a")
+      end
+    end
+
+    context "with downcased OR token" do
+      let(:query_string) do
+        "a or b"
+      end
+
+      it "treats both or and OR as OR token" do
+        is_expected.to eq query_builder.build("a OR b")
       end
     end
   end
