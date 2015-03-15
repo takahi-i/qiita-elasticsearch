@@ -12,7 +12,7 @@ module Qiita
         @filterable_fields = filterable_fields
       end
 
-      # @param [String] query_string Raw query string given from search user
+      # @param [String] query_string Raw query string
       # @return [Hash]
       def build(query_string)
         tokens = parser.parse(query_string)

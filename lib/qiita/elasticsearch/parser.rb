@@ -8,7 +8,7 @@ module Qiita
         @filterable_fields = filterable_fields
       end
 
-      # @param [String] query_string Raw query string given from search user.
+      # @param [String] query_string Raw query string
       # @return [Array<Qiita::Elasticsearch::Token>]
       def parse(query_string)
         tokenizer.tokenize(query_string)
