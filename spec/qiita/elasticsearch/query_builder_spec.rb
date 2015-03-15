@@ -54,16 +54,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a"
       end
 
-      it do
+      it "returns match query" do
         is_expected.to eq(
-          "bool" => {
-            "must" => [],
-            "must_not" => [],
-            "should" => [
-              "match" => {
-                "_all" => "a",
-              },
-            ],
+          "match" => {
+            "_all" => "a",
           },
         )
       end
@@ -74,18 +68,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         '"a"'
       end
 
-      it do
-        is_expected.to eq(
-          "bool" => {
-            "must" => [],
-            "must_not" => [],
-            "should" => [
-              "match" => {
-                "_all" => "a",
-              },
-            ],
-          },
-        )
+      it "returns same query with non-quoted one" do
+        is_expected.to eq query_builder.build("a")
       end
     end
 
@@ -94,16 +78,14 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "-a"
       end
 
-      it do
+      it "returns bool query with must_not property" do
         is_expected.to eq(
           "bool" => {
-            "must" => [],
             "must_not" => [
               "match" => {
                 "_all" => "a",
               },
             ],
-            "should" => [],
           },
         )
       end
@@ -114,11 +96,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a b"
       end
 
-      it do
+      it "returns bool query with should property" do
         is_expected.to eq(
           "bool" => {
-            "must" => [],
-            "must_not" => [],
             "should" => [
               {
                 "match" => {
@@ -141,10 +121,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a -b"
       end
 
-      it do
+      it "returns bool query with must_not and should properties" do
         is_expected.to eq(
           "bool" => {
-            "must" => [],
             "must_not" => [
               "match" => {
                 "_all" => "b",
@@ -169,17 +148,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a"
       end
 
-      it do
+      it "returns multi_match query" do
         is_expected.to eq(
-          "bool" => {
-            "must" => [],
-            "must_not" => [],
-            "should" => [
-              "multi_match" => {
-                "fields" => fields,
-                "query" => "a",
-              },
-            ],
+          "multi_match" => {
+            "fields" => fields,
+            "query" => "a",
           },
         )
       end
@@ -194,23 +167,35 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "tag:a"
       end
 
-      it do
+      it "returns filtered query" do
         is_expected.to eq(
-          "bool" => {
-            "must" => [
-              "filtered" => {
-                "filter" => {
-                  "term" => {
-                    "tag" => "a",
-                  },
-                },
-                "query" => {
-                  "match_all" => {},
-                },
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "tag" => "a",
               },
-            ],
-            "must_not" => [],
-            "should" => [],
+            },
+            "query" => {
+              "match_all" => {},
+            },
+          },
+        )
+      end
+    end
+
+    context "with escaped colon" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        'tag\:a'
+      end
+
+      it "returns match query" do
+        is_expected.to eq(
+          "match" => {
+            "_all" => 'tag\:a',
           },
         )
       end
@@ -221,16 +206,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "tag:a"
       end
 
-      it do
+      it "returns match query" do
         is_expected.to eq(
-          "bool" => {
-            "must" => [],
-            "must_not" => [],
-            "should" => [
-              "match" => {
-                "_all" => "tag:a",
-              },
-            ],
+          "match" => {
+            "_all" => "tag:a",
           },
         )
       end
@@ -245,7 +224,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a tag:b"
       end
 
-      it do
+      it "returns bool query with must and should properties" do
         is_expected.to eq(
           "bool" => {
             "must" => [
@@ -262,7 +241,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 },
               },
             ],
-            "must_not" => [],
             "should" => [
               {
                 "match" => {
@@ -280,34 +258,18 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a OR b"
       end
 
-      it do
+      it "returns bool query with should property" do
         is_expected.to eq(
           "bool" => {
             "should" => [
               {
-                "bool" => {
-                  "must" => [],
-                  "must_not" => [],
-                  "should" => [
-                    {
-                      "match" => {
-                        "_all" => "a",
-                      },
-                    },
-                  ],
+                "match" => {
+                  "_all" => "a",
                 },
               },
               {
-                "bool" => {
-                  "must" => [],
-                  "must_not" => [],
-                  "should" => [
-                    {
-                      "match" => {
-                        "_all" => "b",
-                      },
-                    },
-                  ],
+                "match" => {
+                  "_all" => "b",
                 },
               },
             ],
@@ -331,7 +293,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "OR a"
       end
 
-      it "ignores OR token" do
+      it "returns same query without OR token" do
         is_expected.to eq query_builder.build("a")
       end
     end
