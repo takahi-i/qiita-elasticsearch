@@ -6,8 +6,10 @@ module Qiita
     module Nodes
       class OrSeparatableNode
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
+        # @param [Array<String>, nil] hierarchal_fields
         # @param [Array<String>, nil] matchable_fields
-        def initialize(tokens, matchable_fields: nil)
+        def initialize(tokens, hierarchal_fields: nil, matchable_fields: nil)
+          @hierarchal_fields = hierarchal_fields
           @matchable_fields = matchable_fields
           @tokens = tokens
         end
@@ -19,6 +21,7 @@ module Qiita
           when 1
             Nodes::BoolQueryNode.new(
               tokens_grouped_by_or_token.first,
+              hierarchal_fields: @hierarchal_fields,
               matchable_fields: @matchable_fields,
             ).to_hash
           else
@@ -27,6 +30,7 @@ module Qiita
                 "should" => tokens_grouped_by_or_token.map do |tokens|
                   Nodes::BoolQueryNode.new(
                     tokens,
+                    hierarchal_fields: @hierarchal_fields,
                     matchable_fields: @matchable_fields,
                   ).to_hash
                 end,

@@ -6,15 +6,19 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       query_builder.build(query_string)
     end
 
-    let(:matchable_fields) do
+    let(:filterable_fields) do
     end
 
-    let(:filterable_fields) do
+    let(:hierarchal_fields) do
+    end
+
+    let(:matchable_fields) do
     end
 
     let(:properties) do
       {
         filterable_fields: filterable_fields,
+        hierarchal_fields: hierarchal_fields,
         matchable_fields: matchable_fields,
       }
     end
@@ -349,6 +353,42 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "treats both or and OR as OR token" do
         is_expected.to eq query_builder.build("a OR b")
+      end
+    end
+
+    context "with hierarchal field name" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:hierarchal_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "tag:a"
+      end
+
+      it "returns prefix query" do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "bool" => {
+                "should" => [
+                  "prefix" => {
+                    "tag" => "a/",
+                  },
+                  "term" => {
+                    "tag" => "a",
+                  },
+                ],
+              },
+            },
+            "query" => {
+              "match_all" => {},
+            },
+          },
+        )
       end
     end
   end

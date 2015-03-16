@@ -5,8 +5,10 @@ module Qiita
     module Nodes
       class BoolQueryNode
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
+        # @param [Array<String>, nil] hierarchal_fields
         # @param [Array<String>, nil] matchable_fields
-        def initialize(tokens, matchable_fields: nil)
+        def initialize(tokens, hierarchal_fields: nil, matchable_fields: nil)
+          @hierarchal_fields = hierarchal_fields
           @matchable_fields = matchable_fields
           @tokens = tokens
         end
@@ -42,7 +44,11 @@ module Qiita
 
         def must_not_queries
           must_not_tokens.map do |token|
-            Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
+            Nodes::TokenNode.new(
+              token,
+              hierarchal_fields: @hierarchal_fields,
+              matchable_fields: @matchable_fields,
+            ).to_hash
           end
         end
 
@@ -51,12 +57,20 @@ module Qiita
         end
 
         def must_query
-          Nodes::TokenNode.new(must_tokens.first, matchable_fields: @matchable_fields).to_hash
+          Nodes::TokenNode.new(
+            must_tokens.first,
+            hierarchal_fields: @hierarchal_fields,
+            matchable_fields: @matchable_fields,
+          ).to_hash
         end
 
         def must_queries
           must_tokens.map do |token|
-            Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
+            Nodes::TokenNode.new(
+              token,
+              hierarchal_fields: @hierarchal_fields,
+              matchable_fields: @matchable_fields,
+            ).to_hash
           end
         end
 
@@ -65,12 +79,18 @@ module Qiita
         end
 
         def should_query
-          Nodes::TokenNode.new(should_tokens.first, matchable_fields: @matchable_fields).to_hash
+          Nodes::TokenNode.new(
+            should_tokens.first,
+            matchable_fields: @matchable_fields,
+          ).to_hash
         end
 
         def should_queries
           should_tokens.map do |token|
-            Nodes::TokenNode.new(token, matchable_fields: @matchable_fields).to_hash
+            Nodes::TokenNode.new(
+              token,
+              matchable_fields: @matchable_fields,
+            ).to_hash
           end
         end
 
