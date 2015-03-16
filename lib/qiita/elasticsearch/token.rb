@@ -51,11 +51,6 @@ module Qiita
       def should?
         !must? && !must_not?
       end
-
-      # @note Override
-      def to_s
-        @token_string.dup
-      end
     end
   end
 end
