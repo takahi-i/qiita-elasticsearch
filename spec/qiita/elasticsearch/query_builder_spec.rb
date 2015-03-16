@@ -375,11 +375,15 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             "filter" => {
               "bool" => {
                 "should" => [
-                  "prefix" => {
-                    "tag" => "a/",
+                  {
+                    "prefix" => {
+                      "tag" => "a/",
+                    },
                   },
-                  "term" => {
-                    "tag" => "a",
+                  {
+                    "term" => {
+                      "tag" => "a",
+                    },
                   },
                 ],
               },

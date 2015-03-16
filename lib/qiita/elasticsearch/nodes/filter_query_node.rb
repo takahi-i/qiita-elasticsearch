@@ -18,11 +18,15 @@ module Qiita
                 "filter" => {
                   "bool" => {
                     "should" => [
-                      "prefix" => {
-                        @token.field_name => @token.term + "/",
+                      {
+                        "prefix" => {
+                          @token.field_name => @token.term + "/",
+                        },
                       },
-                      "term" => {
-                        @token.field_name => @token.term,
+                      {
+                        "term" => {
+                          @token.field_name => @token.term,
+                        },
                       },
                     ],
                   },
