@@ -12,7 +12,7 @@ module Qiita
       end
 
       def must?
-        !field_name.nil?
+        !field_name.nil? && !negative?
       end
 
       def must_not?
