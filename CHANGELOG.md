@@ -1,3 +1,6 @@
+## 0.1.3
+- Fix bug on negative token with field name
+
 ## 0.1.2
 - Fix filter query for hierarchal fields
 
