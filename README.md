@@ -1,4 +1,4 @@
-# Qiita::Elasticsearch [![Build Status](https://travis-ci.org/increments/qiita-elasticsearch.svg)](https://travis-ci.org/increments/qiita-elasticsearch) [![Code Climate](https://codeclimate.com/github/increments/qiita-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/increments/qiita-elasticsearch)
+# Qiita::Elasticsearch [![Build Status](https://travis-ci.org/increments/qiita-elasticsearch.svg)](https://travis-ci.org/increments/qiita-elasticsearch) [![Code Climate](https://codeclimate.com/github/increments/qiita-elasticsearch/badges/gpa.svg)](https://codeclimate.com/github/increments/qiita-elasticsearch) [![Test Coverage](https://codeclimate.com/github/increments/qiita-elasticsearch/badges/coverage.svg)](https://codeclimate.com/github/increments/qiita-elasticsearch)
 Elasticsearch client helper for Qiita.
 
 ## Usage
