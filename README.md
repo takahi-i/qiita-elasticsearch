@@ -53,7 +53,7 @@ query_builder.build("user:a b")
 ```
 
 ### hierarchal_fields
-Pass `:hierarchal_fields` options with `:matchable_fields` to enable prefixed filtered queries.
+Pass `:hierarchal_fields` options with `:filterable_fields` to enable prefixed filtered queries.
 With this option, `tag:foo` will hit documents tagged with `foo`, or `foo/...`.
 
 ```rb
