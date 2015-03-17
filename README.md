@@ -38,10 +38,10 @@ query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["tag"
 #=> #<Qiita::Elasticsearch::QueryBuilder:0x007ff81e2de1f0 @filterable_fields=["tag", "title"], @matchable_fields=nil>
 
 query_builder.build("tag:a")
-#=> {"filtered"=>{"filter"=>{"term"=>{"tag"=>"a"}}, "query"=>{"match_all"=>{}}}}
+#=> {"filtered"=>{"filter"=>{"term"=>{"tag"=>"a"}}}}
 
 query_builder.build("tag:a b")
-#=> {"bool"=>{"must"=>[{"filtered"=>{"filter"=>{"term"=>{"tag"=>"a"}}, "query"=>{"match_all"=>{}}}}], "should"=>[{"match"=>{"_all"=>"b"}}]}}
+#=> {"bool"=>{"must"=>[{"filtered"=>{"filter"=>{"term"=>{"tag"=>"a"}}}}], "should"=>[{"match"=>{"_all"=>"b"}}]}}
 
 query_builder.build("user:a b")
 #=> {"bool"=>{"should"=>[{"match"=>{"_all"=>"user:a"}}, {"match"=>{"_all"=>"b"}}]}}

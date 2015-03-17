@@ -31,9 +31,6 @@ module Qiita
                     ],
                   },
                 },
-                "query" => {
-                  "match_all" => {},
-                },
               },
             }
           else
@@ -43,9 +40,6 @@ module Qiita
                   "term" => {
                     @token.field_name => @token.downcased_term,
                   },
-                },
-                "query" => {
-                  "match_all" => {},
                 },
               },
             }

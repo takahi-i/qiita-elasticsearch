@@ -223,9 +223,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "tag" => "a",
               },
             },
-            "query" => {
-              "match_all" => {},
-            },
           },
         )
       end
@@ -247,9 +244,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "term" => {
                 "tag" => "a",
               },
-            },
-            "query" => {
-              "match_all" => {},
             },
           },
         )
@@ -308,9 +302,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                       "tag" => "a",
                     },
                   },
-                  "query" => {
-                    "match_all" => {},
-                  },
                 },
               },
             ],
@@ -338,9 +329,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                     "term" => {
                       "tag" => "b",
                     },
-                  },
-                  "query" => {
-                    "match_all" => {},
                   },
                 },
               },
@@ -443,9 +431,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                   },
                 ],
               },
-            },
-            "query" => {
-              "match_all" => {},
             },
           },
         )
