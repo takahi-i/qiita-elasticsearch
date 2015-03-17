@@ -1,3 +1,6 @@
+## 0.2.0
+- Use filtered query for negative or filter tokens
+
 ## 0.1.4
 - Use downcased term for term and prefix on filtered query
 
