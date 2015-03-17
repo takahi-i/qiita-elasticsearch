@@ -55,10 +55,6 @@ module Qiita
       def quoted?
         !!@quoted
       end
-
-      def should?
-        !must? && !must_not?
-      end
     end
   end
 end
