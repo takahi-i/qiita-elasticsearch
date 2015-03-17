@@ -265,6 +265,40 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with multiple field-named tokens" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "tag:a tag:b"
+      end
+
+      it "returns filtered query" do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "_cache" => true,
+              "bool" => {
+                "must" => [
+                  {
+                    "term" => {
+                      "tag" => "a",
+                    },
+                  },
+                  {
+                    "term" => {
+                      "tag" => "b",
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        )
+      end
+    end
+
     context "with escaped colon" do
       let(:filterable_fields) do
         ["tag"]
