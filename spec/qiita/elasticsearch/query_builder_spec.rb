@@ -88,14 +88,19 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "returns must_not query with match_phrase query" do
         is_expected.to eq(
-          "bool" => {
-            "must_not" => [
-              {
-                "match_phrase" => {
-                  "_all" => "a b",
-                },
+          "filtered" => {
+            "filter" => {
+              "_cache" => true,
+              "bool" => {
+                "must_not" => [
+                  {
+                    "match_phrase" => {
+                      "_all" => "a b",
+                    },
+                  },
+                ],
               },
-            ],
+            },
           },
         )
       end
@@ -128,12 +133,17 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "returns bool query with must_not property" do
         is_expected.to eq(
-          "bool" => {
-            "must_not" => [
-              "match" => {
-                "_all" => "a",
+          "filtered" => {
+            "filter" => {
+              "_cache" => true,
+              "bool" => {
+                "must_not" => [
+                  "match" => {
+                    "_all" => "a",
+                  },
+                ],
               },
-            ],
+            },
           },
         )
       end
@@ -171,17 +181,22 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "returns bool query with must_not and should properties" do
         is_expected.to eq(
-          "bool" => {
-            "must_not" => [
-              "match" => {
-                "_all" => "b",
+          "filtered" => {
+            "filter" => {
+              "_cache" => true,
+              "bool" => {
+                "must_not" => [
+                  "match" => {
+                    "_all" => "b",
+                  },
+                ],
               },
-            ],
-            "should" => [
+            },
+            "query" => {
               "match" => {
                 "_all" => "a",
               },
-            ],
+            },
           },
         )
       end
@@ -223,9 +238,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "tag" => "a",
               },
             },
-            "query" => {
-              "match_all" => {},
-            },
           },
         )
       end
@@ -247,9 +259,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "term" => {
                 "tag" => "a",
               },
-            },
-            "query" => {
-              "match_all" => {},
             },
           },
         )
@@ -289,31 +298,29 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with token including field name and minus" do
-      let(:query_string) do
-        "-tag:a"
-      end
-
       let(:filterable_fields) do
         ["tag"]
       end
 
-      it "returns bool query with must_not property" do
+      let(:query_string) do
+        "-tag:a"
+      end
+
+      it "returns filtered query with bool filter" do
         is_expected.to eq(
-          "bool" => {
-            "must_not" => [
-              {
-                "filtered" => {
-                  "filter" => {
+          "filtered" => {
+            "filter" => {
+              "_cache" => true,
+              "bool" => {
+                "must_not" => [
+                  {
                     "term" => {
                       "tag" => "a",
                     },
                   },
-                  "query" => {
-                    "match_all" => {},
-                  },
-                },
+                ],
               },
-            ],
+            },
           },
         )
       end
@@ -330,28 +337,17 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "returns bool query with must and should properties" do
         is_expected.to eq(
-          "bool" => {
-            "must" => [
-              {
-                "filtered" => {
-                  "filter" => {
-                    "term" => {
-                      "tag" => "b",
-                    },
-                  },
-                  "query" => {
-                    "match_all" => {},
-                  },
-                },
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "tag" => "b",
               },
-            ],
-            "should" => [
-              {
-                "match" => {
-                  "_all" => "a",
-                },
+            },
+            "query" => {
+              "match" => {
+                "_all" => "a",
               },
-            ],
+            },
           },
         )
       end
@@ -443,9 +439,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                   },
                 ],
               },
-            },
-            "query" => {
-              "match_all" => {},
             },
           },
         )

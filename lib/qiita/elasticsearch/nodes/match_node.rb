@@ -1,7 +1,7 @@
 module Qiita
   module Elasticsearch
     module Nodes
-      class MatchQueryNode
+      class MatchNode
         # @param [Qiita::Elasticsearch::Token] token
         # @param [Array<String>, nil] matchable_fields
         def initialize(token, matchable_fields: nil)
@@ -9,7 +9,6 @@ module Qiita
           @token = token
         end
 
-        # @return [Hash] match query or multi_match query
         def to_hash
           if @matchable_fields.nil?
             {
