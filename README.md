@@ -58,8 +58,8 @@ With this option, `tag:foo` will hit documents tagged with `foo`, or `foo/...`.
 
 ```rb
 query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["tag"], hierarchal_fields: ["tag"])
-=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["tag"], @hierarchal_fields=["tag"], @matchable_fields=nil>
+#=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["tag"], @hierarchal_fields=["tag"], @matchable_fields=nil>
 
 query_builder.build("tag:ruby")
-=> {"filtered"=>{"filter"=>{"bool"=>{"should"=>[{"prefix"=>{"tag"=>"ruby/"}}, {"term"=>{"tag"=>"ruby"}}]}}}}
+#=> {"filtered"=>{"filter"=>{"bool"=>{"should"=>[{"prefix"=>{"tag"=>"ruby/"}}, {"term"=>{"tag"=>"ruby"}}]}}}}
 ```
