@@ -231,6 +231,31 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with upcased field name" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "tag:A"
+      end
+
+      it "returns filtered query for downcased field name" do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "tag" => "a",
+              },
+            },
+            "query" => {
+              "match_all" => {},
+            },
+          },
+        )
+      end
+    end
+
     context "with escaped colon" do
       let(:filterable_fields) do
         ["tag"]

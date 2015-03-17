@@ -20,12 +20,12 @@ module Qiita
                     "should" => [
                       {
                         "prefix" => {
-                          @token.field_name => @token.term + "/",
+                          @token.field_name => @token.downcased_term + "/",
                         },
                       },
                       {
                         "term" => {
-                          @token.field_name => @token.term,
+                          @token.field_name => @token.downcased_term,
                         },
                       },
                     ],
@@ -41,7 +41,7 @@ module Qiita
               "filtered" => {
                 "filter" => {
                   "term" => {
-                    @token.field_name => @token.term,
+                    @token.field_name => @token.downcased_term,
                   },
                 },
                 "query" => {

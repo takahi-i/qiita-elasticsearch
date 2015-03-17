@@ -11,6 +11,10 @@ module Qiita
         @token_string = token_string
       end
 
+      def downcased_term
+        @downcased_term ||= term.downcase
+      end
+
       def must?
         !field_name.nil? && !negative?
       end
