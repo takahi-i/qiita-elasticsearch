@@ -15,6 +15,14 @@ module Qiita
         @downcased_term ||= term.downcase
       end
 
+      def for_filter?
+        !field_name.nil?
+      end
+
+      def not_for_filter?
+        !for_filter?
+      end
+
       def must?
         !field_name.nil? && !negative?
       end

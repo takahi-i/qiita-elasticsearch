@@ -1,4 +1,4 @@
-require "qiita/elasticsearch/nodes/bool_query_node"
+require "qiita/elasticsearch/nodes/filterable_node"
 require "qiita/elasticsearch/nodes/null_node"
 
 module Qiita
@@ -19,7 +19,7 @@ module Qiita
           when 0
             Nodes::NullNode.new.to_hash
           when 1
-            Nodes::BoolQueryNode.new(
+            Nodes::FilterableNode.new
               tokens_grouped_by_or_token.first,
               hierarchal_fields: @hierarchal_fields,
               matchable_fields: @matchable_fields,
@@ -28,7 +28,7 @@ module Qiita
             {
               "bool" => {
                 "should" => tokens_grouped_by_or_token.map do |tokens|
-                  Nodes::BoolQueryNode.new(
+                  Nodes::FilterableNode.new(
                     tokens,
                     hierarchal_fields: @hierarchal_fields,
                     matchable_fields: @matchable_fields,

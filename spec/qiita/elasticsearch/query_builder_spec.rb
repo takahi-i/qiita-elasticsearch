@@ -283,28 +283,29 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with token including field name and minus" do
-      let(:query_string) do
-        "-tag:a"
-      end
-
       let(:filterable_fields) do
         ["tag"]
       end
 
-      it "returns bool query with must_not property" do
+      let(:query_string) do
+        "-tag:a"
+      end
+
+      it "returns filtered query with bool filter" do
         is_expected.to eq(
-          "bool" => {
-            "must_not" => [
-              {
-                "filtered" => {
-                  "filter" => {
+          "filtered" => {
+            "filter" => {
+              "_cache" => true,
+              "bool" => {
+                "must_not" => [
+                  {
                     "term" => {
                       "tag" => "a",
                     },
                   },
-                },
+                ],
               },
-            ],
+            },
           },
         )
       end
