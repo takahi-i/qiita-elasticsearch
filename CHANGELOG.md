@@ -1,3 +1,6 @@
+## 0.2.1
+- Fix _cache property on filtered queries
+
 ## 0.2.0
 - Use filtered query for negative or filter tokens
 
