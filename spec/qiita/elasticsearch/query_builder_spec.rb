@@ -90,8 +90,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         is_expected.to eq(
           "filtered" => {
             "filter" => {
-              "_cache" => true,
               "bool" => {
+                "_cache" => true,
                 "must_not" => [
                   {
                     "match_phrase" => {
@@ -135,8 +135,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         is_expected.to eq(
           "filtered" => {
             "filter" => {
-              "_cache" => true,
               "bool" => {
+                "_cache" => true,
                 "must_not" => [
                   "match" => {
                     "_all" => "a",
@@ -183,8 +183,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         is_expected.to eq(
           "filtered" => {
             "filter" => {
-              "_cache" => true,
               "bool" => {
+                "_cache" => true,
                 "must_not" => [
                   "match" => {
                     "_all" => "b",
@@ -278,8 +278,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         is_expected.to eq(
           "filtered" => {
             "filter" => {
-              "_cache" => true,
               "bool" => {
+                "_cache" => true,
                 "must" => [
                   {
                     "term" => {
@@ -344,8 +344,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         is_expected.to eq(
           "filtered" => {
             "filter" => {
-              "_cache" => true,
               "bool" => {
+                "_cache" => true,
                 "must_not" => [
                   {
                     "term" => {

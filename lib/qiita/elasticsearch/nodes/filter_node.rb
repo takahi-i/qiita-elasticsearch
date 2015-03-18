@@ -22,12 +22,12 @@ module Qiita
             ).to_hash
           else
             {
-              "_cache" => true,
               "bool" => {
+                "_cache" => true,
                 "must" => must_queries,
                 "must_not" => must_not_queries,
               }.reject do |key, value|
-                value.empty?
+                value.is_a?(Array) && value.empty?
               end,
             }
           end
