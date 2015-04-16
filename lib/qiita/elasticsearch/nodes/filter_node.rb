@@ -8,9 +8,11 @@ module Qiita
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
         # @param [Array<String>, nil] hierarchal_fields
         # @param [Array<String>, nil] matchable_fields
-        def initialize(tokens, hierarchal_fields: nil, matchable_fields: nil)
+        # @param [Array<String>, nil] range_fields
+        def initialize(tokens, hierarchal_fields: nil, matchable_fields: nil, range_fields: nil)
           @hierarchal_fields = hierarchal_fields
           @matchable_fields = matchable_fields
+          @range_fields = range_fields
           @tokens = tokens
         end
 
@@ -19,6 +21,7 @@ module Qiita
             TermNode.new(
               must_tokens.first,
               hierarchal_fields: @hierarchal_fields,
+              range_fields: @range_fields,
             ).to_hash
           else
             {
@@ -46,6 +49,7 @@ module Qiita
               TermNode.new(
                 token,
                 hierarchal_fields: @hierarchal_fields,
+                range_fields: @range_fields,
               )
             end.to_hash
           end
@@ -60,6 +64,7 @@ module Qiita
             TermNode.new(
               token,
               hierarchal_fields: @hierarchal_fields,
+              range_fields: @range_fields,
             ).to_hash
           end
         end
