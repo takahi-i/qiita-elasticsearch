@@ -8,10 +8,12 @@ module Qiita
       # @param [Array<String>, nil] filterable_fields
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] matchable_fields
-      def initialize(hierarchal_fields: nil, filterable_fields: nil, matchable_fields: nil)
+      # @param [Array<String>, nil] range_fields
+      def initialize(hierarchal_fields: nil, filterable_fields: nil, matchable_fields: nil, range_fields: nil)
         @hierarchal_fields = hierarchal_fields
         @filterable_fields = filterable_fields
         @matchable_fields = matchable_fields
+        @range_fields = range_fields
       end
 
       # @param [String] query_string Raw query string
@@ -25,6 +27,7 @@ module Qiita
             tokens,
             hierarchal_fields: @hierarchal_fields,
             matchable_fields: @matchable_fields,
+            range_fields: @range_fields,
           ).to_hash
         end
       end
