@@ -23,19 +23,19 @@ module Qiita
         if tokens.size.zero?
           Nodes::NullNode.new.to_hash
         else
-          Nodes::OrSeparatableNode.new(
-            tokens,
-            hierarchal_fields: @hierarchal_fields,
-            matchable_fields: @matchable_fields,
-            range_fields: @range_fields,
-          ).to_hash
+          Nodes::OrSeparatableNode.new(tokens).to_hash
         end
       end
 
       private
 
       def tokenizer
-        @tokenizer ||= Tokenizer.new(filterable_fields: @filterable_fields)
+        @tokenizer ||= Tokenizer.new(
+          hierarchal_fields: @hierarchal_fields,
+          filterable_fields: @filterable_fields,
+          matchable_fields: @matchable_fields,
+          range_fields: @range_fields,
+        )
       end
     end
   end

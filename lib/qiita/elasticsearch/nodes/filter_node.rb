@@ -6,23 +6,13 @@ module Qiita
     module Nodes
       class FilterNode
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
-        # @param [Array<String>, nil] hierarchal_fields
-        # @param [Array<String>, nil] matchable_fields
-        # @param [Array<String>, nil] range_fields
-        def initialize(tokens, hierarchal_fields: nil, matchable_fields: nil, range_fields: nil)
-          @hierarchal_fields = hierarchal_fields
-          @matchable_fields = matchable_fields
-          @range_fields = range_fields
+        def initialize(tokens)
           @tokens = tokens
         end
 
         def to_hash
           if must_not_tokens.empty? && must_tokens.length == 1
-            TermNode.new(
-              must_tokens.first,
-              hierarchal_fields: @hierarchal_fields,
-              range_fields: @range_fields,
-            ).to_hash
+            TermNode.new(must_tokens.first).to_hash
           else
             {
               "bool" => {
@@ -41,17 +31,10 @@ module Qiita
         def must_not_queries
           must_not_tokens.map do |token|
             if token.field_name.nil?
-              MatchNode.new(
-                token,
-                matchable_fields: @matchable_fields,
-              )
+              MatchNode.new(token).to_hash
             else
-              TermNode.new(
-                token,
-                hierarchal_fields: @hierarchal_fields,
-                range_fields: @range_fields,
-              )
-            end.to_hash
+              TermNode.new(token).to_hash
+            end
           end
         end
 
@@ -61,11 +44,7 @@ module Qiita
 
         def must_queries
           must_tokens.map do |token|
-            TermNode.new(
-              token,
-              hierarchal_fields: @hierarchal_fields,
-              range_fields: @range_fields,
-            ).to_hash
+            TermNode.new(token).to_hash
           end
         end
 
