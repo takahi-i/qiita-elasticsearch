@@ -1,3 +1,6 @@
+## 0.2.2
+- Support range fields
+
 ## 0.2.1
 - Fix _cache property on filtered queries
 
