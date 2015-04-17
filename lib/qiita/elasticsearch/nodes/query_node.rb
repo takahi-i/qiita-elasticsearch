@@ -6,10 +6,7 @@ module Qiita
     module Nodes
       class QueryNode
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
-        # @param [Array<String>, nil] matchable_fields
-        def initialize(tokens, hierarchal_fields: nil, matchable_fields: nil)
-          @hierarchal_fields = hierarchal_fields
-          @matchable_fields = matchable_fields
+        def initialize(tokens)
           @tokens = tokens
         end
 
@@ -18,15 +15,9 @@ module Qiita
           when 0
             {}
           when 1
-            MatchNode.new(
-              @tokens.first,
-              matchable_fields: @matchable_fields,
-            ).to_hash
+            MatchNode.new(@tokens.first).to_hash
           else
-            MultiShouldNode.new(
-              @tokens,
-              matchable_fields: @matchable_fields,
-            ).to_hash
+            MultiShouldNode.new(@tokens).to_hash
           end
         end
       end
