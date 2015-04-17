@@ -1,6 +1,7 @@
 ## master
 - Change range fields to use integer
 - Support date fields
+- Support time_zone parameter
 
 ## 0.3.0
 - Add downcased_fields options and update case rule

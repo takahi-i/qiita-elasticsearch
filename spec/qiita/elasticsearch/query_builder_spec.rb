@@ -24,6 +24,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:date_fields) do
     end
 
+    let(:time_zone) do
+    end
+
     let(:properties) do
       {
         downcased_fields: downcased_fields,
@@ -32,6 +35,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         matchable_fields: matchable_fields,
         range_fields: range_fields,
         date_fields: date_fields,
+        time_zone: time_zone,
       }
     end
 
@@ -727,9 +731,35 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             )
           end
         end
+
+        context "and time_zone" do
+          let(:time_zone) do
+            "+09:00"
+          end
+
+          let(:query_string) do
+            "created_at:2015-04-17"
+          end
+
+          it "returns range filter with time_zone" do
+            is_expected.to eq(
+              "filtered" => {
+                "filter" => {
+                  "range" => {
+                    "created_at" => {
+                      "gte" => "2015-04-17",
+                      "lt" => "2015-04-18",
+                      "time_zone" => time_zone,
+                    }
+                  },
+                },
+              },
+            )
+          end
+        end
       end
 
-      context "and < operand" do
+      context "and single operand" do
         let(:query_string) do
           "created_at:<2015-04"
         end
@@ -747,25 +777,26 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             },
           )
         end
-      end
 
-      context "and > operand" do
-        let(:query_string) do
-          "created_at:>2015-04"
-        end
+        context "and time_zone" do
+          let(:time_zone) do
+            "+09:00"
+          end
 
-        it "returns range filter" do
-          is_expected.to eq(
-            "filtered" => {
-              "filter" => {
-                "range" => {
-                  "created_at" => {
-                    "gt" => "2015-04",
+          it "returns range filter with time_zone" do
+            is_expected.to eq(
+              "filtered" => {
+                "filter" => {
+                  "range" => {
+                    "created_at" => {
+                      "lt" => "2015-04",
+                      "time_zone" => time_zone,
+                    },
                   },
                 },
               },
-            },
-          )
+            )
+          end
         end
       end
 

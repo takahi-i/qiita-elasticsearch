@@ -18,6 +18,8 @@ module Qiita
         )?
       \z/x
 
+      attr_writer :time_zone
+
       # @return [Hash]
       def to_hash
         case
@@ -26,7 +28,10 @@ module Qiita
             "range" => {
               @field_name => {
                 range_parameter => range_query,
-              },
+                "time_zone" => @time_zone,
+              }.reject do |key, value|
+                key == "time_zone" && value.nil?
+              end,
             },
           }
         when date_match
@@ -35,7 +40,10 @@ module Qiita
               @field_name => {
                 "gte" => beginning_of_range.to_s,
                 "lt" => end_of_range.to_s,
-              },
+                "time_zone" => @time_zone,
+              }.reject do |key, value|
+                key == "time_zone" && value.nil?
+              end,
             },
           }
         else

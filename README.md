@@ -66,7 +66,7 @@ With this option, `stocks:>100` will hit documents stocked by greater than 100 u
 
 ```rb
 query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["stocks"], range_fields: ["stocks"])
-#=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["stocks"], @hierarchal_fields=nil, @matchable_fields=nil, @range_fields=["stocks"], @date_fields=nil>
+#=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["stocks"], @hierarchal_fields=nil, @matchable_fields=nil, @range_fields=["stocks"], @date_fields=nil, @time_zone=nil>
 
 query_builder.build("stocks:>100")
 #=> {"filtered"=>{"filter"=>{"range"=>{"stocks"=>{"gt"=>100}}}}}
@@ -81,6 +81,16 @@ query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["crea
 
 query_builder.build("created_at:<2015-04-01")
 #=> {"filtered"=>{"filter"=>{"range"=>{"created_at"=>{"lt"=>"2015-04-01"}}}}}
+```
+
+### time_zone
+Pass `:time_zone` option to tell how move range field's input to UTC time based date.
+
+```rb
+query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["created_at"], date_fields: ["created_at"], time_zone: "+09:00")
+
+query_builder.build("created_at:<2015-04-16")
+#=> {"filtered"=>{"filter"=>{"range"=>{"created_at"=>{"lt"=>"2015-04-16","time_zone"=>"+09:00"}}}}}
 ```
 
 ### downcased_fields
