@@ -66,10 +66,21 @@ With this option, `stocks:>100` will hit documents stocked by greater than 100 u
 
 ```rb
 query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["stocks"], range_fields: ["stocks"])
-#=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["stocks"], @hierarchal_fields=nil, @matchable_fields=nil, @range_fields=["stocks"]>
+#=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["stocks"], @hierarchal_fields=nil, @matchable_fields=nil, @range_fields=["stocks"], @date_fields=nil>
 
 query_builder.build("stocks:>100")
 #=> {"filtered"=>{"filter"=>{"range"=>{"stocks"=>{"gt"=>100}}}}}
+```
+
+### date_fields
+Pass `:date_fields` option with `:filterable_fields` to enable date filtered queries.
+With this option, `created_at:<2015-04-01` will hit documents created before 2015-04-01.
+
+```rb
+query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["created_at"], date_fields: ["created_at"])
+
+query_builder.build("created_at:<2015-04-01")
+#=> {"filtered"=>{"filter"=>{"range"=>{"created_at"=>{"lt"=>"2015-04-01"}}}}}
 ```
 
 ### downcased_fields

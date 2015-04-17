@@ -21,6 +21,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:range_fields) do
     end
 
+    let(:date_fields) do
+    end
+
     let(:properties) do
       {
         downcased_fields: downcased_fields,
@@ -28,6 +31,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         hierarchal_fields: hierarchal_fields,
         matchable_fields: matchable_fields,
         range_fields: range_fields,
+        date_fields: date_fields,
       }
     end
 
@@ -621,6 +625,173 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                       "range" => {
                         "stocks" => {
                           "lte" => 200,
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          )
+        end
+      end
+    end
+
+    context "with date field name" do
+      let(:filterable_fields) do
+        ["created_at"]
+      end
+
+      let(:date_fields) do
+        ["created_at"]
+      end
+
+      context "and query is invalid as date representation" do
+        let(:query_string) do
+          "created_at:aaa"
+        end
+
+        it "returns term filter" do
+          is_expected.to eq(
+            "filtered" => {
+              "filter" => {
+                "term" => {
+                  "created_at" => "aaa",
+                },
+              },
+            },
+          )
+        end
+      end
+
+      context "and no range operand" do
+        context "and query is YYYY" do
+          let(:query_string) do
+            "created_at:2015"
+          end
+
+          it "returns range filter" do
+            is_expected.to eq(
+              "filtered" => {
+                "filter" => {
+                  "range" => {
+                    "created_at" => {
+                      "gte" => "2015-01-01",
+                      "lt" => "2016-01-01"
+                    }
+                  },
+                },
+              },
+            )
+          end
+        end
+
+        context "and query is YYYY-MM" do
+          let(:query_string) do
+            "created_at:2015-04"
+          end
+
+          it "returns range filter" do
+            is_expected.to eq(
+              "filtered" => {
+                "filter" => {
+                  "range" => {
+                    "created_at" => {
+                      "gte" => "2015-04-01",
+                      "lt" => "2015-05-01"
+                    }
+                  },
+                },
+              },
+            )
+          end
+        end
+
+        context "and query is YYYY-MM-DD" do
+          let(:query_string) do
+            "created_at:2015-04-17"
+          end
+
+          it "returns range filter" do
+            is_expected.to eq(
+              "filtered" => {
+                "filter" => {
+                  "range" => {
+                    "created_at" => {
+                      "gte" => "2015-04-17",
+                      "lt" => "2015-04-18"
+                    }
+                  },
+                },
+              },
+            )
+          end
+        end
+      end
+
+      context "and < operand" do
+        let(:query_string) do
+          "created_at:<2015-04"
+        end
+
+        it "returns range filter" do
+          is_expected.to eq(
+            "filtered" => {
+              "filter" => {
+                "range" => {
+                  "created_at" => {
+                    "lt" => "2015-04",
+                  },
+                },
+              },
+            },
+          )
+        end
+      end
+
+      context "and > operand" do
+        let(:query_string) do
+          "created_at:>2015-04"
+        end
+
+        it "returns range filter" do
+          is_expected.to eq(
+            "filtered" => {
+              "filter" => {
+                "range" => {
+                  "created_at" => {
+                    "gt" => "2015-04",
+                  },
+                },
+              },
+            },
+          )
+        end
+      end
+
+      context "and multiple operands" do
+        let(:query_string) do
+          "created_at:>=2015-04-01 created_at:<=2015-04-17"
+        end
+
+        it "returns two range filters within bool filter" do
+          is_expected.to eq(
+            "filtered" => {
+              "filter" => {
+                "bool" => {
+                  "_cache" => true,
+                  "must" => [
+                    {
+                      "range" => {
+                        "created_at" => {
+                          "gte" => "2015-04-01",
+                        },
+                      },
+                    },
+                    {
+                      "range" => {
+                        "created_at" => {
+                          "lte" => "2015-04-17",
                         },
                       },
                     },

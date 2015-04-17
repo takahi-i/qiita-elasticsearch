@@ -1,3 +1,4 @@
+require "qiita/elasticsearch/date_token"
 require "qiita/elasticsearch/filterable_token"
 require "qiita/elasticsearch/hierarchal_token"
 require "qiita/elasticsearch/matchable_token"
@@ -6,6 +7,7 @@ require "qiita/elasticsearch/range_token"
 module Qiita
   module Elasticsearch
     class Tokenizer
+      DEFAULT_DATE_FIELDS = []
       DEFAULT_DOWNCASED_FIELDS = []
       DEFAULT_FILTERABLE_FIELDS = []
       DEFAULT_HIERARCHAL_FIELDS = []
@@ -23,12 +25,14 @@ module Qiita
         )
       /x
 
+      # @param [Array<String>, nil] date_fields
       # @param [Array<String>, nil] downcased_fields
       # @param [Array<String>, nil] filterable_fields
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] matchable_fields
       # @param [Array<String>, nil] range_fields
-      def initialize(downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, matchable_fields: nil, range_fields: nil)
+      def initialize(date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, matchable_fields: nil, range_fields: nil)
+        @date_fields = date_fields
         @downcased_fields = downcased_fields
         @filterable_fields = filterable_fields
         @hierarchal_fields = hierarchal_fields
@@ -60,6 +64,10 @@ module Qiita
 
       private
 
+      def date_fields
+        @date_fields || DEFAULT_DATE_FIELDS
+      end
+
       def downcased_fields
         @downcased_fields || DEFAULT_DOWNCASED_FIELDS
       end
@@ -78,6 +86,8 @@ module Qiita
 
       def token_class(field_name)
         case
+        when date_fields.include?(field_name)
+          DateToken
         when range_fields.include?(field_name)
           RangeToken
         when hierarchal_fields.include?(field_name)

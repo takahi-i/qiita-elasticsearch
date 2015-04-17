@@ -1,5 +1,6 @@
 ## master
 - Change range fields to use integer
+- Support date fields
 
 ## 0.3.0
 - Add downcased_fields options and update case rule
