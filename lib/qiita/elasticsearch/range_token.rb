@@ -11,14 +11,14 @@ module Qiita
           {
             "range" => {
               @field_name => {
-                range_parameter => range_query,
+                range_parameter => range_query.to_i,
               },
             },
           }
         else
           {
             "term" => {
-              @field_name => proper_cased_term,
+              @field_name => proper_cased_term.to_i,
             },
           }
         end

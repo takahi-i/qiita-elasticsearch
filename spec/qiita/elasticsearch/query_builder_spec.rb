@@ -515,16 +515,34 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with range field name" do
       let(:filterable_fields) do
-        ["created_at"]
+        ["stocks"]
       end
 
       let(:range_fields) do
-        ["created_at"]
+        ["stocks"]
+      end
+
+      context "and query does not consist of digits" do
+        let(:query_string) do
+          "stocks:aaa"
+        end
+
+        it "treats the query as 0" do
+          is_expected.to eq(
+            "filtered" => {
+              "filter" => {
+                "term" => {
+                  "stocks" => 0,
+                },
+              },
+            },
+          )
+        end
       end
 
       context "and no range operand" do
         let(:query_string) do
-          "created_at:2012-02-29"
+          "stocks:100"
         end
 
         it "returns term filter" do
@@ -532,7 +550,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             "filtered" => {
               "filter" => {
                 "term" => {
-                  "created_at" =>  "2012-02-29"
+                  "stocks" => 100,
                 },
               },
             },
@@ -542,7 +560,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       context "and < operand" do
         let(:query_string) do
-          "created_at:<2012-02-29"
+          "stocks:<100"
         end
 
         it "returns range filter" do
@@ -550,8 +568,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             "filtered" => {
               "filter" => {
                 "range" => {
-                  "created_at" => {
-                    "lt" => "2012-02-29"
+                  "stocks" => {
+                    "lt" => 100,
                   },
                 },
               },
@@ -562,7 +580,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       context "and > operand" do
         let(:query_string) do
-          "created_at:>2012-02-29"
+          "stocks:>100"
         end
 
         it "returns range filter" do
@@ -570,8 +588,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             "filtered" => {
               "filter" => {
                 "range" => {
-                  "created_at" => {
-                    "gt" => "2012-02-29"
+                  "stocks" => {
+                    "gt" => 100,
                   },
                 },
               },
@@ -580,9 +598,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
       end
 
-      context "and both < and > operands" do
+      context "and multiple operands" do
         let(:query_string) do
-          "created_at:>2012-02-29 created_at:<2013-02-28"
+          "stocks:>=100 stocks:<=200"
         end
 
         it "returns two range filters within bool filter" do
@@ -594,15 +612,15 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                   "must" => [
                     {
                       "range" => {
-                        "created_at" => {
-                          "gt" => "2012-02-29",
+                        "stocks" => {
+                          "gte" => 100,
                         },
                       },
                     },
                     {
                       "range" => {
-                        "created_at" => {
-                          "lt" => "2013-02-28",
+                        "stocks" => {
+                          "lte" => 200,
                         },
                       },
                     },

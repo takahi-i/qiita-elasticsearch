@@ -1,3 +1,6 @@
+## master
+- Change range fields to use integer
+
 ## 0.3.0
 - Add downcased_fields options and update case rule
 
