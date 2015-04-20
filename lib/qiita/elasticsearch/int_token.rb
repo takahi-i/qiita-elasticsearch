@@ -1,4 +1,5 @@
 require "qiita/elasticsearch/concerns/range_operand_includable"
+require "qiita/elasticsearch/errors"
 require "qiita/elasticsearch/token"
 
 module Qiita
@@ -6,9 +7,12 @@ module Qiita
     class IntToken < Token
       include Concerns::RangeOperandIncludable
 
+      INT_PATTERN = /\A\d+\z/
+
       # @return [Hash]
+      # @raise [InvalidQuery]
       def to_hash
-        if range_parameter
+        if range_parameter && INT_PATTERN =~ range_query
           {
             "range" => {
               @field_name => {
@@ -16,12 +20,14 @@ module Qiita
               },
             },
           }
-        else
+        elsif INT_PATTERN =~ @term
           {
             "term" => {
-              @field_name => downcased_term.to_i,
+              @field_name => @term.to_i,
             },
           }
+        else
+          fail InvalidQuery
         end
       end
     end

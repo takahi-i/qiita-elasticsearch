@@ -1,6 +1,7 @@
 require "active_support/core_ext/date"
 require "active_support/core_ext/integer"
 require "qiita/elasticsearch/concerns/range_operand_includable"
+require "qiita/elasticsearch/errors"
 require "qiita/elasticsearch/token"
 
 module Qiita
@@ -9,7 +10,7 @@ module Qiita
       include Concerns::RangeOperandIncludable
 
       # @note Matches to "YYYY", "YYYY-MM" and "YYYY-MM-DD"
-      DATE_REGEXP = /\A
+      DATE_PATTERN = /\A
         (?<year>\d{4})
         (?:
           -
@@ -24,44 +25,42 @@ module Qiita
       attr_writer :time_zone
 
       # @return [Hash]
+      # @raise [InvalidQuery]
       def to_hash
-        case
-        when range_parameter
-          {
-            "range" => {
-              @field_name => {
-                range_parameter => range_query,
-                "time_zone" => @time_zone,
-              }.reject do |key, value|
-                key == "time_zone" && value.nil?
-              end,
-            },
-          }
-        when date_match
-          {
-            "range" => {
-              @field_name => {
-                "gte" => beginning_of_range.to_s,
-                "lt" => end_of_range.to_s,
-                "time_zone" => @time_zone,
-              }.reject do |key, value|
-                key == "time_zone" && value.nil?
-              end,
-            },
-          }
+        if date_match
+          if range_parameter
+            {
+              "range" => {
+                @field_name => {
+                  range_parameter => range_query,
+                  "time_zone" => @time_zone,
+                }.reject do |key, value|
+                  key == "time_zone" && value.nil?
+                end,
+              },
+            }
+          else
+            {
+              "range" => {
+                @field_name => {
+                  "gte" => beginning_of_range.to_s,
+                  "lt" => end_of_range.to_s,
+                  "time_zone" => @time_zone,
+                }.reject do |key, value|
+                  key == "time_zone" && value.nil?
+                end,
+              },
+            }
+          end
         else
-          {
-            "term" => {
-              @field_name => downcased_term,
-            },
-          }
+          fail InvalidQuery
         end
       end
 
       private
 
       def date_match
-        @date_match ||= DATE_REGEXP.match(range_query || @term)
+        @date_match ||= DATE_PATTERN.match(range_query || @term)
       end
 
       # @return [Date]

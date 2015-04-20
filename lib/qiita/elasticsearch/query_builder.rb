@@ -1,3 +1,4 @@
+require "qiita/elasticsearch/errors"
 require "qiita/elasticsearch/nodes/null_node"
 require "qiita/elasticsearch/nodes/or_separatable_node"
 require "qiita/elasticsearch/tokenizer"
@@ -31,6 +32,8 @@ module Qiita
         else
           Nodes::OrSeparatableNode.new(tokens).to_hash
         end
+      rescue Error
+        Nodes::NullNode.new.to_hash
       end
 
       private

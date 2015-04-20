@@ -535,13 +535,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           "stocks:aaa"
         end
 
-        it "treats the query as 0" do
+        it "returns null query that matches with nothing" do
           is_expected.to eq(
-            "filtered" => {
-              "filter" => {
-                "term" => {
-                  "stocks" => 0,
-                },
+            "query" => {
+              "ids" => {
+                "values" => [],
               },
             },
           )
@@ -655,13 +653,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           "created_at:aaa"
         end
 
-        it "returns term filter" do
+        it "returns null query that matches with nothing" do
           is_expected.to eq(
-            "filtered" => {
-              "filter" => {
-                "term" => {
-                  "created_at" => "aaa",
-                },
+            "query" => {
+              "ids" => {
+                "values" => [],
               },
             },
           )
