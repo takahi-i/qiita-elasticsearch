@@ -2,7 +2,7 @@ require "qiita/elasticsearch/date_token"
 require "qiita/elasticsearch/filterable_token"
 require "qiita/elasticsearch/hierarchal_token"
 require "qiita/elasticsearch/matchable_token"
-require "qiita/elasticsearch/range_token"
+require "qiita/elasticsearch/int_token"
 
 module Qiita
   module Elasticsearch
@@ -11,7 +11,7 @@ module Qiita
       DEFAULT_DOWNCASED_FIELDS = []
       DEFAULT_FILTERABLE_FIELDS = []
       DEFAULT_HIERARCHAL_FIELDS = []
-      DEFAULT_RANGE_FIELDS = []
+      DEFAULT_INT_FIELDS = []
 
       TOKEN_PATTERN = /
         (?<token_string>
@@ -29,16 +29,16 @@ module Qiita
       # @param [Array<String>, nil] downcased_fields
       # @param [Array<String>, nil] filterable_fields
       # @param [Array<String>, nil] hierarchal_fields
+      # @param [Array<String>, nil] int_fields
       # @param [Array<String>, nil] matchable_fields
-      # @param [Array<String>, nil] range_fields
       # @param [String, nil] time_zone
-      def initialize(date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, matchable_fields: nil, range_fields: nil, time_zone: nil)
+      def initialize(date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
         @date_fields = date_fields
         @downcased_fields = downcased_fields
         @filterable_fields = filterable_fields
         @hierarchal_fields = hierarchal_fields
+        @int_fields = int_fields
         @matchable_fields = matchable_fields
-        @range_fields = range_fields
         @time_zone = time_zone
       end
 
@@ -83,16 +83,16 @@ module Qiita
         @hierarchal_fields || DEFAULT_HIERARCHAL_FIELDS
       end
 
-      def range_fields
-        @range_fields || DEFAULT_RANGE_FIELDS
+      def int_fields
+        @int_fields || DEFAULT_INT_FIELDS
       end
 
       def token_class(field_name)
         case
         when date_fields.include?(field_name)
           DateToken
-        when range_fields.include?(field_name)
-          RangeToken
+        when int_fields.include?(field_name)
+          IntToken
         when hierarchal_fields.include?(field_name)
           HierarchalToken
         when filterable_fields.include?(field_name)

@@ -60,13 +60,12 @@ query_builder.build("tag:ruby")
 #=> {"filtered"=>{"filter"=>{"bool"=>{"should"=>[{"prefix"=>{"tag"=>"ruby/"}}, {"term"=>{"tag"=>"ruby"}}]}}}}
 ```
 
-### range_fields
-Pass `:range_fields` option with `:filterable_fields` to enable range filtered queries.
+### int_fields
+Pass `:int_fields` option with `:filterable_fields` to enable range filtered queries.
 With this option, `stocks:>100` will hit documents stocked by greater than 100 users.
 
 ```rb
-query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["stocks"], range_fields: ["stocks"])
-#=> #<Qiita::Elasticsearch::QueryBuilder:0x007fe96d6d5ed0 @filterable_fields=["stocks"], @hierarchal_fields=nil, @matchable_fields=nil, @range_fields=["stocks"], @date_fields=nil, @time_zone=nil>
+query_builder = Qiita::Elasticsearch::QueryBuilder.new(filterable_fields: ["stocks"], int_fields: ["stocks"])
 
 query_builder.build("stocks:>100")
 #=> {"filtered"=>{"filter"=>{"range"=>{"stocks"=>{"gt"=>100}}}}}

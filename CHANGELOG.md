@@ -2,6 +2,7 @@
 - Change range fields to use integer
 - Support date fields
 - Support time_zone parameter
+- Rename range_fields parameter as int_fields
 
 ## 0.3.0
 - Add downcased_fields options and update case rule

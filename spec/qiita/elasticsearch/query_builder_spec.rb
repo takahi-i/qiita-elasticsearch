@@ -18,7 +18,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:matchable_fields) do
     end
 
-    let(:range_fields) do
+    let(:int_fields) do
     end
 
     let(:date_fields) do
@@ -33,7 +33,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         filterable_fields: filterable_fields,
         hierarchal_fields: hierarchal_fields,
         matchable_fields: matchable_fields,
-        range_fields: range_fields,
+        int_fields: int_fields,
         date_fields: date_fields,
         time_zone: time_zone,
       }
@@ -526,7 +526,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         ["stocks"]
       end
 
-      let(:range_fields) do
+      let(:int_fields) do
         ["stocks"]
       end
 

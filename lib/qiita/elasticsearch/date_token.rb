@@ -1,10 +1,13 @@
 require "active_support/core_ext/date"
 require "active_support/core_ext/integer"
-require "qiita/elasticsearch/range_token"
+require "qiita/elasticsearch/concerns/range_operand_includable"
+require "qiita/elasticsearch/token"
 
 module Qiita
   module Elasticsearch
-    class DateToken < RangeToken
+    class DateToken < Token
+      include Concerns::RangeOperandIncludable
+
       # @note Matches to "YYYY", "YYYY-MM" and "YYYY-MM-DD"
       DATE_REGEXP = /\A
         (?<year>\d{4})
