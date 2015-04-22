@@ -5,11 +5,13 @@ require "qiita/elasticsearch/tokenizer"
 module Qiita
   module Elasticsearch
     class QueryBuilder
+      # @param [Array<String>, nil] downcased_fields
       # @param [Array<String>, nil] filterable_fields
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] matchable_fields
       # @param [Array<String>, nil] range_fields
-      def initialize(hierarchal_fields: nil, filterable_fields: nil, matchable_fields: nil, range_fields: nil)
+      def initialize(downcased_fields: nil, hierarchal_fields: nil, filterable_fields: nil, matchable_fields: nil, range_fields: nil)
+        @downcased_fields = downcased_fields
         @hierarchal_fields = hierarchal_fields
         @filterable_fields = filterable_fields
         @matchable_fields = matchable_fields
@@ -31,6 +33,7 @@ module Qiita
 
       def tokenizer
         @tokenizer ||= Tokenizer.new(
+          downcased_fields: @downcased_fields,
           hierarchal_fields: @hierarchal_fields,
           filterable_fields: @filterable_fields,
           matchable_fields: @matchable_fields,

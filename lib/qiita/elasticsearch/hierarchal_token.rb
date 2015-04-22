@@ -10,12 +10,12 @@ module Qiita
             "should" => [
               {
                 "prefix" => {
-                  @field_name => downcased_term + "/",
+                  @field_name => proper_cased_term + "/",
                 },
               },
               {
                 "term" => {
-                  @field_name => downcased_term,
+                  @field_name => proper_cased_term,
                 },
               },
             ],
