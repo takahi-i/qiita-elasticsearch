@@ -18,7 +18,7 @@ module Qiita
         else
           {
             "term" => {
-              @field_name => downcased_term,
+              @field_name => proper_cased_term,
             },
           }
         end

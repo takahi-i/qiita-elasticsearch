@@ -6,6 +6,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       query_builder.build(query_string)
     end
 
+    let(:downcased_fields) do
+    end
+
     let(:filterable_fields) do
     end
 
@@ -20,6 +23,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     let(:properties) do
       {
+        downcased_fields: downcased_fields,
         filterable_fields: filterable_fields,
         hierarchal_fields: hierarchal_fields,
         matchable_fields: matchable_fields,
@@ -248,6 +252,32 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with upcased field name" do
+      let(:filterable_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "tag:A"
+      end
+
+      it "returns filtered query for upcased field name" do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "tag" => "A",
+              },
+            },
+          },
+        )
+      end
+    end
+
+    context "with downcased field name with downcased_fields option" do
+      let(:downcased_fields) do
+        ["tag"]
+      end
+
       let(:filterable_fields) do
         ["tag"]
       end
