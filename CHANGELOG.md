@@ -1,3 +1,10 @@
+## master
+- Change range fields to use integer
+- Support date fields
+- Support time_zone parameter
+- Rename range_fields parameter as int_fields
+- Return a null query if an invalid query string is given
+
 ## 0.3.0
 - Add downcased_fields options and update case rule
 

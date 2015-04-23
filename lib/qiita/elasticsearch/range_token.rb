@@ -3,7 +3,7 @@ require "qiita/elasticsearch/token"
 module Qiita
   module Elasticsearch
     class RangeToken < Token
-      RANGE_TERM_REGEXP = /\A(?<operand>\<|\<=|\>|\>=)(?<query>.*)\z/
+      RANGE_TERM_REGEXP = /\A(?<operand>\<=|\<|\>=|\>)(?<query>.*)\z/
 
       # @return [Hash]
       def to_hash
@@ -11,14 +11,14 @@ module Qiita
           {
             "range" => {
               @field_name => {
-                range_parameter => range_query,
+                range_parameter => range_query.to_i,
               },
             },
           }
         else
           {
             "term" => {
-              @field_name => proper_cased_term,
+              @field_name => proper_cased_term.to_i,
             },
           }
         end

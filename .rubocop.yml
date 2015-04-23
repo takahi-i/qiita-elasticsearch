@@ -39,3 +39,7 @@ Style/StringLiterals:
 
 Style/TrailingComma:
   Enabled: false
+
+Metrics/ParameterLists:
+  Max: 5
+  CountKeywordArgs: false
