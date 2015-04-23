@@ -1,4 +1,4 @@
-## master
+## 0.4.0
 - Change range fields to use integer
 - Support date fields
 - Support time_zone parameter
