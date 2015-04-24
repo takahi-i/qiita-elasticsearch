@@ -3,11 +3,16 @@ module Qiita
     class Token
       attr_reader :field_name, :term
 
-      # @param [true, false] downcased
-      def initialize(downcased: nil, field_name: nil, minus: nil, quoted: nil, term: nil, token_string: nil)
+      # @param [true, false] downcased True if given term must be downcased on query representation
+      # @param [String, nil] field_name Field name part
+      # @param [true, fales] negative True if this term represents negative token (e.g. "-Perl")
+      # @param [true, false] quoted Given term is quoted or note
+      # @param [String] term Term part
+      # @param [String] token_string Original entire string
+      def initialize(downcased: nil, field_name: nil, negative: nil, quoted: nil, term: nil, token_string: nil)
         @downcased = downcased
         @field_name = field_name
-        @minus = minus
+        @negative = negative
         @quoted = quoted
         @term = term
         @token_string = token_string
@@ -43,7 +48,7 @@ module Qiita
       #             ^^^^^
       #             This
       def negative?
-        !positive?
+        !!@negative
       end
 
       # @return [true, false] True if this token is for OR filter
@@ -56,7 +61,7 @@ module Qiita
 
       # @return [true, false] Opposite of #negative?
       def positive?
-        @minus.nil?
+        !negative?
       end
 
       # @return [String] Downcased or not-downcased term
@@ -74,6 +79,12 @@ module Qiita
       #                        This
       def quoted?
         !!@quoted
+      end
+
+      # @note Override
+      # @return [String]
+      def to_s
+        @token_string.to_s
       end
     end
   end

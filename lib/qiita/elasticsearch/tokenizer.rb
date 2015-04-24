@@ -54,7 +54,7 @@ module Qiita
           token = token_class(field_name).new(
             downcased: downcased_fields.include?(field_name),
             field_name: field_name,
-            minus: minus,
+            negative: !minus.nil?,
             quoted: !quoted_term.nil?,
             term: term,
             token_string: token_string,
