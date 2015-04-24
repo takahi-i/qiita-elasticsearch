@@ -48,7 +48,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         ""
       end
 
-      it "returns null query that matches with nothing" do
+      it "returns null" do
         is_expected.to eq(
           "query" => {
             "ids" => {
@@ -535,7 +535,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           "stocks:aaa"
         end
 
-        it "returns null query that matches with nothing" do
+        it "returns null" do
           is_expected.to eq(
             "query" => {
               "ids" => {
@@ -677,7 +677,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           "created_at:aaa"
         end
 
-        it "returns null query that matches with nothing" do
+        it "returns null" do
           is_expected.to eq(
             "query" => {
               "ids" => {
