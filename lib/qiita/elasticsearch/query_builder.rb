@@ -1,4 +1,3 @@
-require "qiita/elasticsearch/errors"
 require "qiita/elasticsearch/nodes/null_node"
 require "qiita/elasticsearch/nodes/or_separatable_node"
 require "qiita/elasticsearch/tokenizer"

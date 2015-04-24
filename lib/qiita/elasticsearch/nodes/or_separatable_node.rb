@@ -31,7 +31,7 @@ module Qiita
 
         # @return [Array<Array<Qiita::Elasticsearch::Token>>]
         def tokens_grouped_by_or_token
-          @tokens_grouped_by_or_token ||= @tokens.each_with_object([[]]) do |token, groups|
+          @tokens_grouped_by_or_token ||= @tokens.reject(&:ignorable?).each_with_object([[]]) do |token, groups|
             if token.or?
               groups << []
             else

@@ -1,7 +1,6 @@
 require "active_support/core_ext/date"
 require "active_support/core_ext/integer"
 require "qiita/elasticsearch/concerns/range_operand_includable"
-require "qiita/elasticsearch/errors"
 require "qiita/elasticsearch/token"
 
 module Qiita
@@ -53,15 +52,11 @@ module Qiita
             }
           end
         else
-          fail InvalidQuery
+          Nodes::NullNode.new.to_hash
         end
       end
 
       private
-
-      def date_match
-        @date_match ||= DATE_PATTERN.match(range_query || @term)
-      end
 
       # @return [Date]
       def beginning_of_range
@@ -76,6 +71,10 @@ module Qiita
           end
       end
 
+      def date_match
+        @date_match ||= DATE_PATTERN.match(range_query || @term)
+      end
+
       # @return [Date]
       def end_of_range
         @end_of_range ||=
@@ -87,6 +86,11 @@ module Qiita
           else
             beginning_of_range + 1.year
           end
+      end
+
+      # @note Override
+      def has_invalid_term?
+        !!date_match
       end
     end
   end
