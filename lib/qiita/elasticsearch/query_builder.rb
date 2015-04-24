@@ -31,8 +31,6 @@ module Qiita
         else
           Nodes::OrSeparatableNode.new(tokens).to_hash
         end
-      rescue Error
-        Nodes::NullNode.new.to_hash
       end
 
       private
