@@ -3,7 +3,7 @@ require "qiita/elasticsearch/query_builder"
 RSpec.describe Qiita::Elasticsearch::QueryBuilder do
   describe "#build" do
     subject do
-      query_builder.build(query_string)
+      query_builder.build(query_string).to_hash
     end
 
     let(:downcased_fields) do
@@ -65,7 +65,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns null query" do
-        is_expected.to eq query_builder.build("")
+        is_expected.to eq query_builder.build("").to_hash
       end
     end
 
@@ -460,7 +460,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns null query" do
-        is_expected.to eq query_builder.build("")
+        is_expected.to eq query_builder.build("").to_hash
       end
     end
 
@@ -470,7 +470,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns same query without OR token" do
-        is_expected.to eq query_builder.build("a")
+        is_expected.to eq query_builder.build("a").to_hash
       end
     end
 
@@ -480,7 +480,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "treats both or and OR as OR token" do
-        is_expected.to eq query_builder.build("a OR b")
+        is_expected.to eq query_builder.build("a OR b").to_hash
       end
     end
 
