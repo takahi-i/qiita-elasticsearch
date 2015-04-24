@@ -639,6 +639,30 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with invalid date token and OR token" do
+      let(:date_fields) do
+        ["created_at"]
+      end
+
+      let(:filterable_fields) do
+        ["created_at"]
+      end
+
+      let(:query_string) do
+        "created_at:invalid OR *"
+      end
+
+      it "returns null query" do
+        is_expected.to eq(
+          "query" => {
+            "ids" => {
+              "values" => [],
+            },
+          },
+        )
+      end
+    end
+
     context "with date field name" do
       let(:filterable_fields) do
         ["created_at"]
