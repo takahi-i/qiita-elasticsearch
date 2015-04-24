@@ -27,12 +27,13 @@ module Qiita
         @downcased_term ||= term.downcase
       end
 
-      def to_hash
-        fail NotImplementedError
-      end
-
       def filter?
         !field_name.nil? || negative?
+      end
+
+      # @return [true, false] True if this token is ignorable on building query (e.g. "-stocked:foo")
+      def ignorable?
+        negative? && !field_name.nil? && has_invalid_term?
       end
 
       def must?
@@ -81,10 +82,23 @@ module Qiita
         !!@quoted
       end
 
+      # @note Override me
+      def to_hash
+        fail NotImplementedError
+      end
+
       # @note Override
       # @return [String]
       def to_s
         @token_string.to_s
+      end
+
+      private
+
+      # @note Override me if needed
+      # @return [true, false] True if its term is invalid value
+      def has_invalid_term?
+        false
       end
     end
   end

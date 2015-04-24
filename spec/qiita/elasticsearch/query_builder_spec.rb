@@ -521,7 +521,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
-    context "with range field name" do
+    context "with invalid int token" do
       let(:filterable_fields) do
         ["stocks"]
       end
@@ -530,20 +530,56 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         ["stocks"]
       end
 
-      context "and query does not consist of digits" do
-        let(:query_string) do
-          "stocks:aaa"
-        end
+      let(:query_string) do
+        "stocks:invalid"
+      end
 
-        it "returns null" do
-          is_expected.to eq(
-            "query" => {
-              "ids" => {
-                "values" => [],
+      it "returns null filtered query" do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "query" => {
+                "ids" => {
+                  "values" => [],
+                },
               },
             },
-          )
-        end
+          },
+        )
+      end
+    end
+
+    context "with negative invalid int token" do
+      let(:filterable_fields) do
+        ["stocks"]
+      end
+
+      let(:int_fields) do
+        ["stocks"]
+      end
+
+      let(:query_string) do
+        "-stocks:invalid"
+      end
+
+      it "ignores negative invalid int " do
+        is_expected.to eq(
+          "query" => {
+            "ids" => {
+              "values" => [],
+            },
+          },
+        )
+      end
+    end
+
+    context "with range field name" do
+      let(:filterable_fields) do
+        ["stocks"]
+      end
+
+      let(:int_fields) do
+        ["stocks"]
       end
 
       context "and no range operand" do
@@ -639,6 +675,34 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with invalid date token" do
+      let(:date_fields) do
+        ["created_at"]
+      end
+
+      let(:filterable_fields) do
+        ["created_at"]
+      end
+
+      let(:query_string) do
+        "created_at:invalid"
+      end
+
+      it "returns null filtered query" do
+        is_expected.to eq(
+          "filtered" => {
+            "filter" => {
+              "query" => {
+                "ids" => {
+                  "values" => [],
+                },
+              },
+            },
+          },
+        )
+      end
+    end
+
     context "with invalid date token and OR token" do
       let(:date_fields) do
         ["created_at"]
@@ -649,15 +713,30 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       let(:query_string) do
-        "created_at:invalid OR *"
+        "created_at:invalid OR Ruby"
       end
 
-      it "returns null query" do
+      it "returns query that matches Ruby" do
         is_expected.to eq(
-          "query" => {
-            "ids" => {
-              "values" => [],
-            },
+          "bool" => {
+            "should" => [
+              {
+                "filtered" => {
+                  "filter" => {
+                    "query" => {
+                      "ids" => {
+                        "values" => [],
+                      },
+                    },
+                  },
+                },
+              },
+              {
+                "match" => {
+                  "_all" => "Ruby",
+                },
+              },
+            ],
           },
         )
       end
@@ -670,22 +749,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       let(:date_fields) do
         ["created_at"]
-      end
-
-      context "and query is invalid as date representation" do
-        let(:query_string) do
-          "created_at:aaa"
-        end
-
-        it "returns null" do
-          is_expected.to eq(
-            "query" => {
-              "ids" => {
-                "values" => [],
-              },
-            },
-          )
-        end
       end
 
       context "and no range operand" do
