@@ -31,9 +31,9 @@ module Qiita
         !field_name.nil? || negative?
       end
 
-      # @return [true, false] True if this token is ignorable on building query (e.g. "-stocked:foo")
-      def ignorable?
-        negative? && !field_name.nil? && has_invalid_term?
+      # @return [true, false] True if this token is for query
+      def query?
+        !sort? && !ignorable?
       end
 
       def must?
@@ -83,6 +83,12 @@ module Qiita
       end
 
       # @note Override me
+      # @return [true, false] True if this token is for sort order (e.g. "sort:created-asc")
+      def sort?
+        field_name == "sort"
+      end
+
+      # @note Override me
       def to_hash
         fail NotImplementedError
       end
@@ -99,6 +105,11 @@ module Qiita
       # @return [true, false] True if its term is invalid value
       def has_invalid_term?
         false
+      end
+
+      # @return [true, false] True if this token has no meaning
+      def ignorable?
+        negative? && !field_name.nil? && has_invalid_term?
       end
     end
   end

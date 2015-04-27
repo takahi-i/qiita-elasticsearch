@@ -1,3 +1,4 @@
+require "active_support/core_ext/object/try"
 require "qiita/elasticsearch/nodes/null_node"
 require "qiita/elasticsearch/nodes/or_separatable_node"
 require "qiita/elasticsearch/tokenizer"
@@ -5,6 +6,8 @@ require "qiita/elasticsearch/tokenizer"
 module Qiita
   module Elasticsearch
     class Query
+      DEFAULT_SORT = ["_score"]
+
       # @param [Array<Qiita::Elasticsearch::Token>] tokens
       # @param [Hash] query_builder_options For building new query from this query
       def initialize(tokens, query_builder_options = nil)
@@ -41,14 +44,39 @@ module Qiita
         end
       end
 
-      # @return [Hash]
-      # @example query.to_hash
-      def to_hash
+      # @return [Hash] query property for request body for Elasticsearch
+      def query
         if has_empty_tokens?
           Nodes::NullNode.new.to_hash
         else
           Nodes::OrSeparatableNode.new(@tokens).to_hash
         end
+      end
+
+      # @return [Array] sort property for request body for Elasticsearch
+      def sort
+        case @tokens.select(&:sort?).last.try(:term)
+        when "created-asc"
+          [{ "created_at" => "asc" }, "_score"]
+        when "created-desc"
+          [{ "created_at" => "desc" }, "_score"]
+        when "related-asc"
+          [{ "_score" => "desc" }]
+        when "stocks-asc"
+          [{ "stocks" => "asc" }, "_score"]
+        when "stocks-desc"
+          [{ "stocks" => "desc" }, "_score"]
+        else
+          DEFAULT_SORT
+        end
+      end
+
+      # @return [Hash] request body for Elasticsearch
+      def to_hash
+        {
+          "query" => query,
+          "sort" => sort,
+        }
       end
 
       # @return [String] query string generated from its tokens

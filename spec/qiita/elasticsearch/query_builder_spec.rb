@@ -2,10 +2,6 @@ require "qiita/elasticsearch/query_builder"
 
 RSpec.describe Qiita::Elasticsearch::QueryBuilder do
   describe "#build" do
-    subject do
-      query_builder.build(query_string).to_hash
-    end
-
     let(:downcased_fields) do
     end
 
@@ -39,6 +35,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       }
     end
 
+    let(:query) do
+      query_builder.build(query_string)
+    end
+
     let(:query_builder) do
       described_class.new(properties)
     end
@@ -48,8 +48,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         ""
       end
 
-      it "returns null" do
-        is_expected.to eq(
+      it "returns null query" do
+        expect(query.query.to_hash).to eq(
           "query" => {
             "ids" => {
               "values" => [],
@@ -65,7 +65,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns null query" do
-        is_expected.to eq query_builder.build("").to_hash
+        expect(query.to_hash).to eq query_builder.build("").to_hash
       end
     end
 
@@ -75,7 +75,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "match" => {
             "_all" => "a",
           },
@@ -89,7 +89,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match_phrase query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "match_phrase" => {
             "_all" => "a b",
           },
@@ -103,7 +103,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns must_not query with match_phrase query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "bool" => {
@@ -132,7 +132,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns multi match query with phrase type" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "multi_match" => {
             "fields" => matchable_fields,
             "query" => "a b",
@@ -148,7 +148,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns bool query with must_not property" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "bool" => {
@@ -171,7 +171,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns bool query with should property" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "bool" => {
             "should" => [
               {
@@ -196,7 +196,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns bool query with must_not and should properties" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "bool" => {
@@ -228,7 +228,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns multi_match query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "multi_match" => {
             "fields" => matchable_fields,
             "query" => "a",
@@ -247,7 +247,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns filtered query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "term" => {
@@ -269,7 +269,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns filtered query for upcased field name" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "term" => {
@@ -295,7 +295,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns filtered query for downcased field name" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "term" => {
@@ -317,7 +317,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns filtered query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "bool" => {
@@ -351,7 +351,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "match" => {
             "_all" => 'tag\:a',
           },
@@ -365,7 +365,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "match" => {
             "_all" => "tag:a",
           },
@@ -383,7 +383,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns filtered query with bool filter" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "bool" => {
@@ -412,7 +412,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns bool query with must and should properties" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "term" => {
@@ -435,7 +435,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns bool query with should property" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "bool" => {
             "should" => [
               {
@@ -460,7 +460,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns null query" do
-        is_expected.to eq query_builder.build("").to_hash
+        expect(query.to_hash).to eq query_builder.build("").to_hash
       end
     end
 
@@ -470,7 +470,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns same query without OR token" do
-        is_expected.to eq query_builder.build("a").to_hash
+        expect(query.to_hash).to eq query_builder.build("a").to_hash
       end
     end
 
@@ -480,7 +480,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "treats both or and OR as OR token" do
-        is_expected.to eq query_builder.build("a OR b").to_hash
+        expect(query.to_hash).to eq query_builder.build("a OR b").to_hash
       end
     end
 
@@ -498,7 +498,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns prefix query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "bool" => {
@@ -535,7 +535,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns null filtered query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "query" => {
@@ -563,7 +563,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "ignores negative invalid int " do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "query" => {
             "ids" => {
               "values" => [],
@@ -588,7 +588,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
 
         it "returns term filter" do
-          is_expected.to eq(
+          expect(query.query.to_hash).to eq(
             "filtered" => {
               "filter" => {
                 "term" => {
@@ -606,7 +606,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
 
         it "returns range filter" do
-          is_expected.to eq(
+          expect(query.query.to_hash).to eq(
             "filtered" => {
               "filter" => {
                 "range" => {
@@ -626,7 +626,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
 
         it "returns range filter" do
-          is_expected.to eq(
+          expect(query.query.to_hash).to eq(
             "filtered" => {
               "filter" => {
                 "range" => {
@@ -646,7 +646,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
 
         it "returns two range filters within bool filter" do
-          is_expected.to eq(
+          expect(query.query.to_hash).to eq(
             "filtered" => {
               "filter" => {
                 "bool" => {
@@ -689,7 +689,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns null filtered query" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
               "query" => {
@@ -717,7 +717,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns query that matches Ruby" do
-        is_expected.to eq(
+        expect(query.query.to_hash).to eq(
           "bool" => {
             "should" => [
               {
@@ -758,7 +758,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           end
 
           it "returns range filter" do
-            is_expected.to eq(
+            expect(query.query.to_hash).to eq(
               "filtered" => {
                 "filter" => {
                   "range" => {
@@ -779,7 +779,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           end
 
           it "returns range filter" do
-            is_expected.to eq(
+            expect(query.query.to_hash).to eq(
               "filtered" => {
                 "filter" => {
                   "range" => {
@@ -800,7 +800,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           end
 
           it "returns range filter" do
-            is_expected.to eq(
+            expect(query.query.to_hash).to eq(
               "filtered" => {
                 "filter" => {
                   "range" => {
@@ -825,7 +825,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           end
 
           it "returns range filter with time_zone" do
-            is_expected.to eq(
+            expect(query.query.to_hash).to eq(
               "filtered" => {
                 "filter" => {
                   "range" => {
@@ -848,7 +848,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
 
         it "returns range filter" do
-          is_expected.to eq(
+          expect(query.query.to_hash).to eq(
             "filtered" => {
               "filter" => {
                 "range" => {
@@ -867,7 +867,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           end
 
           it "returns range filter with time_zone" do
-            is_expected.to eq(
+            expect(query.query.to_hash).to eq(
               "filtered" => {
                 "filter" => {
                   "range" => {
@@ -889,7 +889,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
 
         it "returns two range filters within bool filter" do
-          is_expected.to eq(
+          expect(query.query.to_hash).to eq(
             "filtered" => {
               "filter" => {
                 "bool" => {
@@ -915,6 +915,37 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             },
           )
         end
+      end
+    end
+
+    context "without sort token" do
+      let(:query_string) do
+        "Ruby"
+      end
+
+      it "returns default sort option" do
+        expect(query.sort).to eq(["_score"])
+      end
+    end
+
+    context "with sort:created-asc" do
+      let(:filterable_fields) do
+        ["sort"]
+      end
+
+      let(:query_string) do
+        "sort:created-asc"
+      end
+
+      it "returns a Query object that has the specified sort option" do
+        expect(query.sort).to eq(
+          [
+            {
+              "created_at" => "asc",
+            },
+            "_score",
+          ],
+        )
       end
     end
   end
