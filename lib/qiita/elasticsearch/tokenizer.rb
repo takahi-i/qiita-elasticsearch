@@ -77,7 +77,7 @@ module Qiita
       end
 
       def filterable_fields
-        (@filterable_fields || DEFAULT_FILTERABLE_FIELDS) + EXTRA_FILTERABLE_FIELDS
+        (@filterable_fields || DEFAULT_FILTERABLE_FIELDS) | EXTRA_FILTERABLE_FIELDS
       end
 
       def hierarchal_fields

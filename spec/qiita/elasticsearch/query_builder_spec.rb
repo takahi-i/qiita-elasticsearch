@@ -929,10 +929,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with sort:created-asc" do
-      let(:filterable_fields) do
-        ["sort"]
-      end
-
       let(:query_string) do
         "sort:created-asc"
       end
