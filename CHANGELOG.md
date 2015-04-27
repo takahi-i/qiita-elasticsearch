@@ -1,3 +1,6 @@
+## 0.6.0
+- Change `Query#to_hash` behavior and support sort option
+
 ## 0.5.0
 - Change `QueryBuilder#build` to return `Query` object
 
