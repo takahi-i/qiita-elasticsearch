@@ -20,7 +20,11 @@ module Qiita
       # @return [Qiita::Elasticsearch::Query]
       # @example query.append_field_token(field_name: "tag", term: "Ruby")
       def append_field_token(field_name: nil, term: nil)
-        build_query([*@tokens, "#{field_name}:#{term}"].join(" "))
+        if has_field_token?(field_name: field_name, term: term)
+          self
+        else
+          build_query([*@tokens, "#{field_name}:#{term}"].join(" "))
+        end
       end
 
       # @param [String] field_name
