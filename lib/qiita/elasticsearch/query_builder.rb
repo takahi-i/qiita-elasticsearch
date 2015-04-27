@@ -1,6 +1,6 @@
 require "qiita/elasticsearch/nodes/null_node"
 require "qiita/elasticsearch/nodes/or_separatable_node"
-require "qiita/elasticsearch/tokenizer"
+require "qiita/elasticsearch/query"
 
 module Qiita
   module Elasticsearch
@@ -23,14 +23,17 @@ module Qiita
       end
 
       # @param [String] query_string Raw query string
-      # @return [Hash]
+      # @return [Qiita::Elasticsearch::Query]
       def build(query_string)
-        tokens = tokenizer.tokenize(query_string)
-        if tokens.size.zero?
-          Nodes::NullNode.new.to_hash
-        else
-          Nodes::OrSeparatableNode.new(tokens).to_hash
-        end
+        Query.new(
+          tokenizer.tokenize(query_string),
+          downcased_fields: @downcased_fields,
+          filterable_fields: @filterable_fields,
+          hierarchal_fields: @hierarchal_fields,
+          int_fields: @int_fields,
+          matchable_fields: @matchable_fields,
+          time_zone: @time_zone,
+        )
       end
 
       private
