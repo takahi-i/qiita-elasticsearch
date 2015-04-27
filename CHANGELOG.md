@@ -1,3 +1,8 @@
+## 0.7.0
+- Support `is:coediting` query
+- Change default sort order with created-desc
+- Improve some filter options and Query methods
+
 ## 0.6.0
 - Change `Query#to_hash` behavior and support sort option
 
