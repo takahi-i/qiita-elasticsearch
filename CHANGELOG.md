@@ -1,3 +1,6 @@
+## 0.5.0
+- Change `QueryBuilder#build` to return `Query` object
+
 ## 0.4.0
 - Change range fields to use integer
 - Support date fields
