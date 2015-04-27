@@ -100,6 +100,22 @@ RSpec.describe Qiita::Elasticsearch::Query do
 
       it { is_expected.to be false }
     end
+
+    context "without field_name argument" do
+      let(:field_name) do
+        nil
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context "without term argument" do
+      let(:term) do
+        nil
+      end
+
+      it { is_expected.to be true }
+    end
   end
 
   describe "#to_s" do

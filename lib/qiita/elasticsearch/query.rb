@@ -30,7 +30,7 @@ module Qiita
       def delete_field_token(field_name: nil, term: nil)
         build_query(
           @tokens.reject do |token|
-            token.field_name == field_name && token.term == term
+            (field_name.nil? || token.field_name == field_name) && (term.nil? || token.term == term)
           end.join(" ")
         )
       end
@@ -40,7 +40,7 @@ module Qiita
       # @example query.has_field_token?(field_name: "tag", term: "Ruby")
       def has_field_token?(field_name: nil, term: nil)
         @tokens.any? do |token|
-          token.field_name == field_name && token.term == term
+          (field_name.nil? || token.field_name == field_name) && (term.nil? || token.term == term)
         end
       end
 
