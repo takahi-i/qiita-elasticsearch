@@ -20,30 +20,33 @@ RSpec.describe Qiita::Elasticsearch::Query do
 
     it "appends given field token and returns a new query" do
       is_expected.to eq(
-        "filtered" => {
-          "filter" => {
-            "bool" => {
-              "_cache" => true,
-              "must" => [
-                {
-                  "term" => {
-                    "tag" => "Rails",
+        "query" => {
+          "filtered" => {
+            "filter" => {
+              "bool" => {
+                "_cache" => true,
+                "must" => [
+                  {
+                    "term" => {
+                      "tag" => "Rails",
+                    },
                   },
-                },
-                {
-                  "term" => {
-                    "tag" => "Ruby",
+                  {
+                    "term" => {
+                      "tag" => "Ruby",
+                    },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-          "query" => {
-            "match" => {
-              "_all" => "test",
+            "query" => {
+              "match" => {
+                "_all" => "test",
+              },
             },
           },
         },
+        "sort" => ["_score"],
       )
     end
   end
@@ -55,9 +58,12 @@ RSpec.describe Qiita::Elasticsearch::Query do
 
     it "deletes given field token and returns a new query" do
       is_expected.to eq(
-        "match" => {
-          "_all" => "test",
+        "query" => {
+          "match" => {
+            "_all" => "test",
+          },
         },
+        "sort" => ["_score"],
       )
     end
   end
@@ -113,18 +119,21 @@ RSpec.describe Qiita::Elasticsearch::Query do
 
     it "updates field tokens that match with given field name and term" do
       is_expected.to eq(
-        "filtered" => {
-          "filter" => {
-            "term" => {
-              "tag" => "Ruby",
+        "query" => {
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "tag" => "Ruby",
+              },
             },
-          },
-          "query" => {
-            "match" => {
-              "_all" => "test",
+            "query" => {
+              "match" => {
+                "_all" => "test",
+              },
             },
           },
         },
+        "sort" => ["_score"],
       )
     end
   end
