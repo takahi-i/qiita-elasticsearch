@@ -51,6 +51,11 @@ module Qiita
         end
       end
 
+      # @return [String] query string generated from its tokens
+      def to_s
+        @tokens.join(" ")
+      end
+
       # @param [String] field_name
       # @param [String] term
       # @return [Qiita::Elasticsearch::Query]

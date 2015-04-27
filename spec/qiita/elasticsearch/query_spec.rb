@@ -96,6 +96,16 @@ RSpec.describe Qiita::Elasticsearch::Query do
     end
   end
 
+  describe "#to_s" do
+    subject do
+      query.to_s
+    end
+
+    it "returns query string generated from its tokens" do
+      is_expected.to eq query_string
+    end
+  end
+
   describe "#update_field_token" do
     subject do
       query.update_field_token(field_name: "tag", term: "Ruby").to_hash
