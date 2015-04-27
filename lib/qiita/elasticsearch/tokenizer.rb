@@ -12,7 +12,7 @@ module Qiita
       DEFAULT_FILTERABLE_FIELDS = []
       DEFAULT_HIERARCHAL_FIELDS = []
       DEFAULT_INT_FIELDS = []
-      EXTRA_FILTERABLE_FIELDS = ["sort"]
+      EXTRA_FILTERABLE_FIELDS = ["is", "sort"]
 
       TOKEN_PATTERN = /
         (?<token_string>

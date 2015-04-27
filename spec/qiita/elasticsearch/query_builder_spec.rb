@@ -944,5 +944,23 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         )
       end
     end
+
+    context "with is:shared" do
+      let(:query_string) do
+        "is:shared"
+      end
+
+      it "returns query to focus on shared articles" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "edit_permission" => 2,
+              },
+            },
+          },
+        )
+      end
+    end
   end
 end
