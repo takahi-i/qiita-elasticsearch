@@ -924,7 +924,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns default sort option" do
-        expect(query.sort).to eq(["_score"])
+        expect(query.sort).to eq([{ "created_at" => "desc" }, "_score"])
       end
     end
 

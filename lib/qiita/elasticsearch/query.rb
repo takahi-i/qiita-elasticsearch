@@ -6,7 +6,7 @@ require "qiita/elasticsearch/tokenizer"
 module Qiita
   module Elasticsearch
     class Query
-      DEFAULT_SORT = ["_score"]
+      DEFAULT_SORT = [{ "created_at" => "desc" }, "_score"]
 
       # @param [Array<Qiita::Elasticsearch::Token>] tokens
       # @param [Hash] query_builder_options For building new query from this query
@@ -58,9 +58,9 @@ module Qiita
         case @tokens.select(&:sort?).last.try(:term)
         when "created-asc"
           [{ "created_at" => "asc" }, "_score"]
-        when "created-desc"
-          [{ "created_at" => "desc" }, "_score"]
         when "related-asc"
+          ["_score"]
+        when "related-desc"
           [{ "_score" => "desc" }]
         when "stocks-asc"
           [{ "stocks" => "asc" }, "_score"]

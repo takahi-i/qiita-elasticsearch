@@ -46,7 +46,7 @@ RSpec.describe Qiita::Elasticsearch::Query do
             },
           },
         },
-        "sort" => ["_score"],
+        "sort" => [{ "created_at" => "desc" }, "_score"],
       )
     end
   end
@@ -63,7 +63,7 @@ RSpec.describe Qiita::Elasticsearch::Query do
             "_all" => "test",
           },
         },
-        "sort" => ["_score"],
+        "sort" => [{ "created_at" => "desc" }, "_score"],
       )
     end
   end
@@ -133,7 +133,7 @@ RSpec.describe Qiita::Elasticsearch::Query do
             },
           },
         },
-        "sort" => ["_score"],
+        "sort" => [{ "created_at" => "desc" }, "_score"],
       )
     end
   end
