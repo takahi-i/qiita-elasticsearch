@@ -1,3 +1,6 @@
+## 0.7.1
+- Take empty token query as any matcher
+
 ## 0.7.0
 - Support `is:coediting` query
 - Change default sort order with created-desc
