@@ -50,11 +50,7 @@ module Qiita
 
       # @return [Hash] query property for request body for Elasticsearch
       def query
-        if has_empty_tokens?
-          Nodes::NullNode.new.to_hash
-        else
-          Nodes::OrSeparatableNode.new(@tokens).to_hash
-        end
+        Nodes::OrSeparatableNode.new(@tokens).to_hash
       end
 
       # @return [Array] sort property for request body for Elasticsearch
@@ -108,10 +104,6 @@ module Qiita
       # @example build_query("test tag:Ruby")
       def build_query(query_string)
         query_builder.build(query_string)
-      end
-
-      def has_empty_tokens?
-        @tokens.size.zero?
       end
 
       # @return [Qiita::Elasticsearch::QueryBuilder]

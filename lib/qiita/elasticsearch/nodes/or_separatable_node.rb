@@ -1,5 +1,5 @@
 require "qiita/elasticsearch/nodes/filterable_node"
-require "qiita/elasticsearch/nodes/null_node"
+require "qiita/elasticsearch/nodes/any_node"
 
 module Qiita
   module Elasticsearch
@@ -13,7 +13,7 @@ module Qiita
         def to_hash
           case tokens_grouped_by_or_token.size
           when 0
-            Nodes::NullNode.new.to_hash
+            Nodes::AnyNode.new.to_hash
           when 1
             Nodes::FilterableNode.new(tokens_grouped_by_or_token.first).to_hash
           else

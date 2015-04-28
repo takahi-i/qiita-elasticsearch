@@ -43,20 +43,26 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       described_class.new(properties)
     end
 
+    shared_examples_for "returns query to match anything" do
+      it "returns query to match anything" do
+        expect(query.to_hash).to eq(
+          "query" => {
+            "match_all" => {},
+          },
+          "sort" => [
+            { "created_at" => "desc" },
+            "_score",
+          ],
+        )
+      end
+    end
+
     context "with empty string" do
       let(:query_string) do
         ""
       end
 
-      it "returns null query" do
-        expect(query.query.to_hash).to eq(
-          "query" => {
-            "ids" => {
-              "values" => [],
-            },
-          },
-        )
-      end
+      include_examples "returns query to match anything"
     end
 
     context "with no token" do
@@ -562,15 +568,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "-stocks:invalid"
       end
 
-      it "ignores negative invalid int " do
-        expect(query.query.to_hash).to eq(
-          "query" => {
-            "ids" => {
-              "values" => [],
-            },
-          },
-        )
-      end
+      include_examples "returns query to match anything"
     end
 
     context "with range field name" do
