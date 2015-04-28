@@ -947,7 +947,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with is:shared" do
       let(:query_string) do
-        "is:shared"
+        "is:coediting"
       end
 
       it "returns query to focus on shared articles" do
