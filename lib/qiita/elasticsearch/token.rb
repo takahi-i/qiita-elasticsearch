@@ -1,7 +1,17 @@
 module Qiita
   module Elasticsearch
     class Token
-      attr_reader :field_name, :term
+      # @return [String, nil]
+      # @note `xxxxxxxxxxxx:yyyyyyyyyyy`
+      #        ^^^^^^^^^^^^
+      #         field_name
+      attr_reader :field_name
+
+      # @return [String]
+      # @note `xxxxxxxxxxxx:yyyyyyyyyyy`
+      #                     ^^^^^^^^^^^
+      #                        term
+      attr_reader :term
 
       # @param [true, false] downcased True if given term must be downcased on query representation
       # @param [String, nil] field_name Field name part
