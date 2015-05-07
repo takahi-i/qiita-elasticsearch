@@ -960,5 +960,48 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         )
       end
     end
+
+    context "with is:project" do
+      let(:query_string) do
+        "is:project"
+      end
+
+      it "returns query to focus on project type" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "type" => {
+                "value" => "project",
+              },
+            },
+          },
+        )
+      end
+    end
+
+    context "with -is:project" do
+      let(:query_string) do
+        "-is:project"
+      end
+
+      it "returns query to reject project type" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "bool" => {
+                "_cache" => true,
+                "must_not" => [
+                  {
+                    "type" => {
+                      "value" => "project",
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        )
+      end
+    end
   end
 end

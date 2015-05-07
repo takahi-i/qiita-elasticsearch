@@ -109,6 +109,12 @@ module Qiita
         @token_string.to_s
       end
 
+      # @note Override me if needed
+      # @return [true, false]
+      def type?
+        false
+      end
+
       private
 
       # @note Override me if needed

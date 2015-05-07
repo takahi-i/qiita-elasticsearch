@@ -84,6 +84,11 @@ module Qiita
         @tokens.join(" ")
       end
 
+      # @return [String, nil] last positive type name in query string
+      def type
+        @tokens.select(&:type?).select(&:positive?).last.try(:type)
+      end
+
       # @param [String] field_name
       # @param [String] term
       # @return [Qiita::Elasticsearch::Query]
