@@ -1,3 +1,6 @@
+## 0.8.0
+- Add is:project & is:article tokens
+
 ## 0.7.1
 - Take empty token query as any matcher
 
