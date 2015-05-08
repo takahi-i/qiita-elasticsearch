@@ -128,6 +128,56 @@ RSpec.describe Qiita::Elasticsearch::Query do
     end
   end
 
+  describe "#type" do
+    subject do
+      query.type
+    end
+
+    context "without any type token" do
+      it { is_expected.to be_nil }
+    end
+
+    context "with -is:project" do
+      let(:query_string) do
+        "-is:project"
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "with is:project" do
+      let(:query_string) do
+        "is:project"
+      end
+
+      it { is_expected.to eq "project" }
+    end
+
+    context "with is:article" do
+      let(:query_string) do
+        "is:article"
+      end
+
+      it { is_expected.to eq "team_item" }
+    end
+
+    context "with is:article is:project" do
+      let(:query_string) do
+        "is:article is:project"
+      end
+
+      it { is_expected.to eq "project" }
+    end
+
+    context "with is:article -is:project" do
+      let(:query_string) do
+        "is:article -is:project"
+      end
+
+      it { is_expected.to eq "team_item" }
+    end
+  end
+
   describe "#update_field_token" do
     subject do
       query.update_field_token(field_name: "tag", term: "Ruby").to_hash
