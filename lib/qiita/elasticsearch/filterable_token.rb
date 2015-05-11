@@ -8,6 +8,12 @@ module Qiita
       # @return [Hash]
       def to_hash
         case
+        when archived?
+          {
+            "term" => {
+              "archived" => true,
+            },
+          }
         when coediting?
           {
             "term" => {
@@ -44,6 +50,10 @@ module Qiita
       end
 
       private
+
+      def archived?
+        field_name == "is" && term == "archived"
+      end
 
       def article_type?
         field_name == "is" && term == "article"

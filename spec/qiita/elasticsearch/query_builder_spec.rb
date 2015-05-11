@@ -1003,5 +1003,48 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         )
       end
     end
+
+    context "with is:archived" do
+      let(:query_string) do
+        "is:archived"
+      end
+
+      it "returns query to select archived documents" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "term" => {
+                "archived" => true,
+              },
+            },
+          },
+        )
+      end
+    end
+
+    context "with -is:archived" do
+      let(:query_string) do
+        "-is:archived"
+      end
+
+      it "returns query to reject archived documents" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "bool" => {
+                "_cache" => true,
+                "must_not" => [
+                  {
+                    "term" => {
+                      "archived" => true,
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        )
+      end
+    end
   end
 end
