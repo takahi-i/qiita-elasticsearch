@@ -1,3 +1,6 @@
+## 0.9.0
+- Add is:archived filter token for projects
+
 ## 0.8.0
 - Add is:project & is:article tokens
 
