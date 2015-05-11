@@ -40,11 +40,13 @@ module Qiita
       end
 
       # @param [String] field_name
+      # @param [false, nil, true] positive
       # @param [String] term
       # @example query.has_field_token?(field_name: "tag", term: "Ruby")
-      def has_field_token?(field_name: nil, term: nil)
+      def has_field_token?(field_name: nil, positive: nil, term: nil)
         @tokens.any? do |token|
-          (field_name.nil? || token.field_name == field_name) && (term.nil? || token.term == term)
+          (field_name.nil? || token.field_name == field_name) && (term.nil? || token.term == term) &&
+            (positive.nil? || positive && token.positive? || !positive && token.negative?)
         end
       end
 

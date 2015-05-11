@@ -70,11 +70,15 @@ RSpec.describe Qiita::Elasticsearch::Query do
 
   describe "#has_field_token?" do
     subject do
-      query.has_field_token?(field_name: field_name, term: term)
+      query.has_field_token?(field_name: field_name, positive: positive, term: term)
     end
 
     let(:field_name) do
       "tag"
+    end
+
+    let(:positive) do
+      nil
     end
 
     let(:term) do
@@ -112,6 +116,46 @@ RSpec.describe Qiita::Elasticsearch::Query do
     context "without term argument" do
       let(:term) do
         nil
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context "with positive true with positive token" do
+      let(:positive) do
+        true
+      end
+
+      it { is_expected.to be true }
+    end
+
+    context "with positive false with positive token" do
+      let(:positive) do
+        false
+      end
+
+      it { is_expected.to be false }
+    end
+
+    context "with positive true with negative token" do
+      let(:positive) do
+        true
+      end
+
+      let(:query_string) do
+        "-tag:Rails"
+      end
+
+      it { is_expected.to be false }
+    end
+
+    context "with positive false with negative token" do
+      let(:positive) do
+        false
+      end
+
+      let(:query_string) do
+        "-tag:Rails"
       end
 
       it { is_expected.to be true }
