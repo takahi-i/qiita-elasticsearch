@@ -1,3 +1,6 @@
+## 0.9.1
+- Add positive option to Query#has_field_token?
+
 ## 0.9.0
 - Add is:archived filter token for projects
 
