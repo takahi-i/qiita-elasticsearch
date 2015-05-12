@@ -1,3 +1,6 @@
+## 0.11.0
+- Add sort:lgtms-asc and sort:lgtms-desc tokens
+
 ## 0.10.0
 - Add sort:updated-asc and sort:updated-desc tokens
 
