@@ -1,3 +1,6 @@
+## 0.10.0
+- Add sort:updated-asc and sort:updated-desc tokens
+
 ## 0.9.1
 - Add positive option to Query#has_field_token?
 
