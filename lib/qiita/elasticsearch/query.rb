@@ -60,6 +60,10 @@ module Qiita
         case @tokens.select(&:sort?).last.try(:term)
         when "created-asc"
           [{ "created_at" => "asc" }, "_score"]
+        when "lgtms-asc"
+          [{ "lgtms" => "asc" }, "_score"]
+        when "lgtms-desc"
+          [{ "lgtms" => "desc" }, "_score"]
         when "related-asc"
           ["_score"]
         when "related-desc"
