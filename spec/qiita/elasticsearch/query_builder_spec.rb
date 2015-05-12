@@ -943,6 +943,40 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with sort:updated-asc" do
+      let(:query_string) do
+        "sort:updated-asc"
+      end
+
+      it "returns query to sort in updated order " do
+        expect(query.sort).to eq(
+          [
+            {
+              "updated_at" => "asc",
+            },
+            "_score",
+          ],
+        )
+      end
+    end
+
+    context "with sort:updated-desc" do
+      let(:query_string) do
+        "sort:updated-desc"
+      end
+
+      it "returns query to sort in reverse updated order " do
+        expect(query.sort).to eq(
+          [
+            {
+              "updated_at" => "desc",
+            },
+            "_score",
+          ],
+        )
+      end
+    end
+
     context "with is:shared" do
       let(:query_string) do
         "is:coediting"

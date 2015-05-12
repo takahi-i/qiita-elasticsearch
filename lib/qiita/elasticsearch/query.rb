@@ -68,6 +68,10 @@ module Qiita
           [{ "stocks" => "asc" }, "_score"]
         when "stocks-desc"
           [{ "stocks" => "desc" }, "_score"]
+        when "updated-asc"
+          [{ "updated_at" => "asc" }, "_score"]
+        when "updated-desc"
+          [{ "updated_at" => "desc" }, "_score"]
         else
           DEFAULT_SORT
         end
