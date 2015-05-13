@@ -57,7 +57,7 @@ module Qiita
 
       # @return [Array] sort property for request body for Elasticsearch
       def sort
-        case @tokens.select(&:sort?).last.try(:term)
+        case sort_term
         when "created-asc"
           [{ "created_at" => "asc" }, "_score"]
         when "lgtms-asc"
@@ -79,6 +79,10 @@ module Qiita
         else
           DEFAULT_SORT
         end
+      end
+
+      def sort_term
+        @tokens.select(&:sort?).last.try(:term)
       end
 
       # @return [Hash] request body for Elasticsearch
