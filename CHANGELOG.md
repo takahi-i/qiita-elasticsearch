@@ -1,3 +1,6 @@
+## 0.12.2
+- Change Query#sort_term behavior on unknown sort token
+
 ## 0.12.1
 - Add Query#sort_term method
 
