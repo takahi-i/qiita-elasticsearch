@@ -162,6 +162,32 @@ RSpec.describe Qiita::Elasticsearch::Query do
     end
   end
 
+  describe "#sort_term" do
+    subject do
+      query.sort_term
+    end
+
+    context "with unknown sort token" do
+      let(:query_string) do
+        "sort:unknown"
+      end
+
+      it { is_expected.to be_nil }
+    end
+
+    context "without sort token" do
+      it { is_expected.to be_nil }
+    end
+
+    context "with sort:updated-asc" do
+      let(:query_string) do
+        "sort:updated-asc"
+      end
+
+      it { is_expected.to eq "updated-asc" }
+    end
+  end
+
   describe "#to_s" do
     subject do
       query.to_s

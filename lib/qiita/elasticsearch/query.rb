@@ -8,6 +8,18 @@ module Qiita
     class Query
       DEFAULT_SORT = [{ "created_at" => "desc" }, "_score"]
 
+      SORTS_TABLE = {
+        "created-asc" => [{ "created_at" => "asc" }, "_score"],
+        "lgtms-asc" => [{ "lgtms" => "asc" }, "_score"],
+        "lgtms-desc" => [{ "lgtms" => "desc" }, "_score"],
+        "related-asc" => ["_score"],
+        "related-desc" => [{ "_score" => "desc" }],
+        "stocks-asc" => [{ "stocks" => "asc" }, "_score"],
+        "stocks-desc" => [{ "stocks" => "desc" }, "_score"],
+        "updated-asc" => [{ "updated_at" => "asc" }, "_score"],
+        "updated-desc" => [{ "updated_at" => "desc" }, "_score"],
+      }
+
       # @param [Array<Qiita::Elasticsearch::Token>] tokens
       # @param [Hash] query_builder_options For building new query from this query
       def initialize(tokens, query_builder_options = nil)
@@ -57,32 +69,12 @@ module Qiita
 
       # @return [Array] sort property for request body for Elasticsearch
       def sort
-        case sort_term
-        when "created-asc"
-          [{ "created_at" => "asc" }, "_score"]
-        when "lgtms-asc"
-          [{ "lgtms" => "asc" }, "_score"]
-        when "lgtms-desc"
-          [{ "lgtms" => "desc" }, "_score"]
-        when "related-asc"
-          ["_score"]
-        when "related-desc"
-          [{ "_score" => "desc" }]
-        when "stocks-asc"
-          [{ "stocks" => "asc" }, "_score"]
-        when "stocks-desc"
-          [{ "stocks" => "desc" }, "_score"]
-        when "updated-asc"
-          [{ "updated_at" => "asc" }, "_score"]
-        when "updated-desc"
-          [{ "updated_at" => "desc" }, "_score"]
-        else
-          DEFAULT_SORT
-        end
+        SORTS_TABLE[sort_term] || DEFAULT_SORT
       end
 
       def sort_term
-        @tokens.select(&:sort?).last.try(:term)
+        term = @tokens.select(&:sort?).last.try(:term)
+        term if SORTS_TABLE.key?(term)
       end
 
       # @return [Hash] request body for Elasticsearch
