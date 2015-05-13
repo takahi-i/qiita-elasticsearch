@@ -1,3 +1,6 @@
+## 0.12.0
+- Build AND search query for term tokens (e.g. "foo bar" means "foo AND bar")
+
 ## 0.11.0
 - Add sort:lgtms-asc and sort:lgtms-desc tokens
 
