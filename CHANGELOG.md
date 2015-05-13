@@ -1,3 +1,6 @@
+## 0.12.1
+- Add Query#sort_term method
+
 ## 0.12.0
 - Build AND search query for term tokens (e.g. "foo bar" means "foo AND bar")
 
