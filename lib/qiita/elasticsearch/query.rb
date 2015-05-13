@@ -10,6 +10,7 @@ module Qiita
 
       SORTS_TABLE = {
         "created-asc" => [{ "created_at" => "asc" }, "_score"],
+        "created-desc" => [{ "created_at" => "desc" }, "_score"],
         "lgtms-asc" => [{ "lgtms" => "asc" }, "_score"],
         "lgtms-desc" => [{ "lgtms" => "desc" }, "_score"],
         "related-asc" => ["_score"],
