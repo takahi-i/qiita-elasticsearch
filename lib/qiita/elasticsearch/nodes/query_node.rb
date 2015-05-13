@@ -1,5 +1,5 @@
 require "qiita/elasticsearch/nodes/match_node"
-require "qiita/elasticsearch/nodes/multi_should_node"
+require "qiita/elasticsearch/nodes/multi_must_node"
 
 module Qiita
   module Elasticsearch
@@ -17,7 +17,7 @@ module Qiita
           when 1
             MatchNode.new(@tokens.first).to_hash
           else
-            MultiShouldNode.new(@tokens).to_hash
+            MultiMustNode.new(@tokens).to_hash
           end
         end
       end

@@ -176,10 +176,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a b"
       end
 
-      it "returns bool query with should property" do
+      it "returns AND query" do
         expect(query.query.to_hash).to eq(
           "bool" => {
-            "should" => [
+            "must" => [
               {
                 "match" => {
                   "_all" => "a",

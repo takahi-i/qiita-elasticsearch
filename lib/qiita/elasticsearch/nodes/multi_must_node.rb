@@ -3,7 +3,7 @@ require "qiita/elasticsearch/nodes/match_node"
 module Qiita
   module Elasticsearch
     module Nodes
-      class MultiShouldNode
+      class MultiMustNode
         # @param [Array<Qiita::Elasticsearch::Tokens>] tokens
         def initialize(tokens)
           @tokens = tokens
@@ -12,15 +12,15 @@ module Qiita
         def to_hash
           {
             "bool" => {
-              "should" => should_queries,
+              "must" => must_queries,
             },
           }
         end
 
         private
 
-        # @return [Array<Hash>] Queries to be used as a value of `should` property of bool query.
-        def should_queries
+        # @return [Array<Hash>] Queries to be used as a value of `must` property of bool query.
+        def must_queries
           @tokens.map do |token|
             MatchNode.new(token).to_hash
           end
