@@ -12,7 +12,8 @@ module Qiita
       DEFAULT_FILTERABLE_FIELDS = []
       DEFAULT_HIERARCHAL_FIELDS = []
       DEFAULT_INT_FIELDS = []
-      EXTRA_FILTERABLE_FIELDS = %w(is sort)
+      EXTRA_DATE_FIELDS = %w(created updated)
+      EXTRA_FILTERABLE_FIELDS = %w(created is sort updated)
 
       TOKEN_PATTERN = /
         (?<token_string>
@@ -69,7 +70,7 @@ module Qiita
       private
 
       def date_fields
-        @date_fields || DEFAULT_DATE_FIELDS
+        (@date_fields || DEFAULT_DATE_FIELDS) | EXTRA_DATE_FIELDS
       end
 
       def downcased_fields

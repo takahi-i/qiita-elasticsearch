@@ -674,14 +674,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with invalid date token" do
-      let(:date_fields) do
-        ["created"]
-      end
-
-      let(:filterable_fields) do
-        ["created"]
-      end
-
       let(:query_string) do
         "created:invalid"
       end
@@ -702,14 +694,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with invalid date token and OR token" do
-      let(:date_fields) do
-        ["created"]
-      end
-
-      let(:filterable_fields) do
-        ["created"]
-      end
-
       let(:query_string) do
         "created:invalid OR Ruby"
       end
@@ -741,14 +725,6 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with date field name" do
-      let(:filterable_fields) do
-        ["created"]
-      end
-
-      let(:date_fields) do
-        ["created"]
-      end
-
       context "and no range operand" do
         context "and query is YYYY" do
           let(:query_string) do
