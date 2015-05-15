@@ -1,3 +1,6 @@
+## 0.13.0
+- Improve `created:...` and `updated:` tokens
+
 ## 0.12.2
 - Change Query#sort_term behavior on unknown sort token
 
