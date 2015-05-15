@@ -675,15 +675,15 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with invalid date token" do
       let(:date_fields) do
-        ["created_at"]
+        ["created"]
       end
 
       let(:filterable_fields) do
-        ["created_at"]
+        ["created"]
       end
 
       let(:query_string) do
-        "created_at:invalid"
+        "created:invalid"
       end
 
       it "returns null filtered query" do
@@ -703,15 +703,15 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with invalid date token and OR token" do
       let(:date_fields) do
-        ["created_at"]
+        ["created"]
       end
 
       let(:filterable_fields) do
-        ["created_at"]
+        ["created"]
       end
 
       let(:query_string) do
-        "created_at:invalid OR Ruby"
+        "created:invalid OR Ruby"
       end
 
       it "returns query that matches Ruby" do
@@ -742,17 +742,17 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with date field name" do
       let(:filterable_fields) do
-        ["created_at"]
+        ["created"]
       end
 
       let(:date_fields) do
-        ["created_at"]
+        ["created"]
       end
 
       context "and no range operand" do
         context "and query is YYYY" do
           let(:query_string) do
-            "created_at:2015"
+            "created:2015"
           end
 
           it "returns range filter" do
@@ -773,7 +773,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
         context "and query is YYYY-MM" do
           let(:query_string) do
-            "created_at:2015-04"
+            "created:2015-04"
           end
 
           it "returns range filter" do
@@ -794,7 +794,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
         context "and query is YYYY-MM-DD" do
           let(:query_string) do
-            "created_at:2015-04-17"
+            "created:2015-04-17"
           end
 
           it "returns range filter" do
@@ -819,7 +819,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
           end
 
           let(:query_string) do
-            "created_at:2015-04-17"
+            "created:2015-04-17"
           end
 
           it "returns range filter with time_zone" do
@@ -842,7 +842,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       context "and single operand" do
         let(:query_string) do
-          "created_at:<2015-04"
+          "created:<2015-04"
         end
 
         it "returns range filter" do
@@ -883,7 +883,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       context "and multiple operands" do
         let(:query_string) do
-          "created_at:>=2015-04-01 created_at:<=2015-04-17"
+          "created:>=2015-04-01 created:<=2015-04-17"
         end
 
         it "returns two range filters within bool filter" do

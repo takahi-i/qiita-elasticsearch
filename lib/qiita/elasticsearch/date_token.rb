@@ -21,6 +21,11 @@ module Qiita
         )?
       \z/x
 
+      FIELD_NAMES_TABLE = {
+        "created" => "created_at",
+        "updated" => "updated_at",
+      }
+
       attr_writer :time_zone
 
       # @return [Hash]
@@ -30,7 +35,7 @@ module Qiita
           if range_parameter
             {
               "range" => {
-                @field_name => {
+                converted_field_name => {
                   range_parameter => range_query,
                   "time_zone" => @time_zone,
                 }.reject do |key, value|
@@ -41,7 +46,7 @@ module Qiita
           else
             {
               "range" => {
-                @field_name => {
+                converted_field_name => {
                   "gte" => beginning_of_range.to_s,
                   "lt" => end_of_range.to_s,
                   "time_zone" => @time_zone,
@@ -69,6 +74,12 @@ module Qiita
           else
             Date.new(date_match[:year].to_i)
           end
+      end
+
+      # e.g. created:2000-01-01 -> created_at
+      # @return [String]
+      def converted_field_name
+        FIELD_NAMES_TABLE[@field_name] || @field_name
       end
 
       def date_match
