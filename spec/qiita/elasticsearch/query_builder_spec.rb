@@ -1056,5 +1056,32 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         )
       end
     end
+
+    context "with likes:>3" do
+      let(:filterable_fields) do
+        ["likes"]
+      end
+
+      let(:int_fields) do
+        ["likes"]
+      end
+      let(:query_string) do
+        "likes:>3"
+      end
+
+      it "returns query to filter by lgtms" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "range" => {
+                "lgtms" => {
+                  "gt" => 3,
+                },
+              },
+            },
+          },
+        )
+      end
+    end
   end
 end

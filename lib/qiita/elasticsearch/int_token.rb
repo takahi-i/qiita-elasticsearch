@@ -14,7 +14,7 @@ module Qiita
         if range_parameter && has_valid_range_query?
           {
             "range" => {
-              @field_name => {
+              proper_field_name => {
                 range_parameter => range_query.to_i,
               },
             },
@@ -22,7 +22,7 @@ module Qiita
         elsif has_valid_int_term?
           {
             "term" => {
-              @field_name => @term.to_i,
+              proper_field_name => @term.to_i,
             },
           }
         else
@@ -51,6 +51,16 @@ module Qiita
 
       def has_valid_range_query?
         INT_PATTERN === range_query
+      end
+
+      # Convert likes:>3" into "lgtms:>3" because "like" is a more friendly word.
+      # @return [String]
+      def proper_field_name
+        if @field_name == "likes"
+          "lgtms"
+        else
+          @field_name
+        end
       end
     end
   end

@@ -11,8 +11,8 @@ module Qiita
       SORTS_TABLE = {
         "created-asc" => [{ "created_at" => "asc" }, "_score"],
         "created-desc" => [{ "created_at" => "desc" }, "_score"],
-        "lgtms-asc" => [{ "lgtms" => "asc" }, "_score"],
-        "lgtms-desc" => [{ "lgtms" => "desc" }, "_score"],
+        "likes-asc" => [{ "lgtms" => "asc" }, "_score"],
+        "likes-desc" => [{ "lgtms" => "desc" }, "_score"],
         "related-asc" => ["_score"],
         "related-desc" => [{ "_score" => "desc" }],
         "stocks-asc" => [{ "stocks" => "asc" }, "_score"],
