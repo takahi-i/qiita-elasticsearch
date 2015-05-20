@@ -1,3 +1,6 @@
+## 0.14.0
+- Prefer "like" than "lgtm"
+
 ## 0.13.0
 - Improve `created:...` and `updated:` tokens
 
