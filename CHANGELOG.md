@@ -1,3 +1,6 @@
+## 0.14.1
+- Nest match query with "query" property in must not
+
 ## 0.14.0
 - Prefer "like" than "lgtm"
 
