@@ -31,7 +31,9 @@ module Qiita
         def must_not_queries
           must_not_tokens.map do |token|
             if token.field_name.nil?
-              MatchNode.new(token).to_hash
+              {
+                "query" => token.to_hash,
+              }
             else
               TermNode.new(token).to_hash
             end

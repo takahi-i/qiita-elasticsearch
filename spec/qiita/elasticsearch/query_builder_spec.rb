@@ -116,8 +116,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "_cache" => true,
                 "must_not" => [
                   {
-                    "match_phrase" => {
-                      "_all" => "a b",
+                    "query" => {
+                      "match_phrase" => {
+                        "_all" => "a b",
+                      },
                     },
                   },
                 ],
@@ -160,8 +162,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "bool" => {
                 "_cache" => true,
                 "must_not" => [
-                  "match" => {
-                    "_all" => "a",
+                  "query" => {
+                    "match" => {
+                      "_all" => "a",
+                    },
                   },
                 ],
               },
@@ -208,8 +212,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "bool" => {
                 "_cache" => true,
                 "must_not" => [
-                  "match" => {
-                    "_all" => "b",
+                  "query" => {
+                    "match" => {
+                      "_all" => "b",
+                    },
                   },
                 ],
               },
