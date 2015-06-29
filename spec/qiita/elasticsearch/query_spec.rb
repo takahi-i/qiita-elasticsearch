@@ -40,8 +40,25 @@ RSpec.describe Qiita::Elasticsearch::Query do
               },
             },
             "query" => {
-              "match" => {
-                "_all" => "test",
+              "bool" => {
+                "should" => [
+                  {
+                    "multi_match" => {
+                      "boost" => 1,
+                      "fields" => ["_all"],
+                      "query" => "test",
+                      "type" => "phrase",
+                    },
+                  },
+                  {
+                    "multi_match" => {
+                      "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
+                      "fields" => ["_all"],
+                      "query" => "test",
+                      "type" => "best_fields",
+                    },
+                  },
+                ],
               },
             },
           },
@@ -59,8 +76,25 @@ RSpec.describe Qiita::Elasticsearch::Query do
     it "deletes given field token and returns a new query" do
       is_expected.to eq(
         "query" => {
-          "match" => {
-            "_all" => "test",
+          "bool" => {
+            "should" => [
+              {
+                "multi_match" => {
+                  "boost" => 1,
+                  "fields" => ["_all"],
+                  "query" => "test",
+                  "type" => "phrase",
+                },
+              },
+              {
+                "multi_match" => {
+                  "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
+                  "fields" => ["_all"],
+                  "query" => "test",
+                  "type" => "best_fields",
+                },
+              },
+            ],
           },
         },
         "sort" => [{ "created_at" => "desc" }, "_score"],
@@ -263,8 +297,25 @@ RSpec.describe Qiita::Elasticsearch::Query do
               },
             },
             "query" => {
-              "match" => {
-                "_all" => "test",
+              "bool" => {
+                "should" => [
+                  {
+                    "multi_match" => {
+                      "boost" => 1,
+                      "fields" => ["_all"],
+                      "query" => "test",
+                      "type" => "phrase",
+                    },
+                  },
+                  {
+                    "multi_match" => {
+                      "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
+                      "fields" => ["_all"],
+                      "query" => "test",
+                      "type" => "best_fields",
+                    },
+                  },
+                ],
               },
             },
           },
