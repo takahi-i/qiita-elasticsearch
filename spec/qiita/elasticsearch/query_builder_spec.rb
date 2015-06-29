@@ -1,6 +1,8 @@
 require "qiita/elasticsearch/query_builder"
 
 RSpec.describe Qiita::Elasticsearch::QueryBuilder do
+  include Qiita::Elasticsearch::SpecHelper
+
   describe "#build" do
     let(:downcased_fields) do
     end
@@ -80,29 +82,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a"
       end
 
-      it "returns bool query including match and term queries" do
-        expect(query.query.to_hash).to eq(
-          "bool" => {
-            "should" => [
-              {
-                "multi_match" => {
-                  "boost" => 1,
-                  "fields" => ["_all"],
-                  "query" => "a",
-                  "type" => "phrase",
-                },
-              },
-              {
-                "multi_match" => {
-                  "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                  "fields" => ["_all"],
-                  "query" => "a",
-                  "type" => "best_fields",
-                },
-              },
-            ],
-          },
-        )
+      it "returns combined match query" do
+        expect(query.query.to_hash).to eq(build_combined_match_query(query: "a"))
       end
     end
 
@@ -111,7 +92,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         '"a b"'
       end
 
-      it "returns match_phrase query" do
+      it "returns multi match query with phrase type" do
         expect(query.query.to_hash).to eq(
           "multi_match" => {
             "boost" => 1,
@@ -128,7 +109,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         '-"a b"'
       end
 
-      it "returns must_not query with match_phrase query" do
+      it "returns must_not query with phrase multi match query" do
         expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
@@ -186,28 +167,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "bool" => {
                 "_cache" => true,
                 "must_not" => [
-                  "query" => {
-                    "bool" => {
-                      "should" => [
-                        {
-                          "multi_match" => {
-                            "boost" => 1,
-                            "fields" => ["_all"],
-                            "query" => "a",
-                            "type" => "phrase",
-                          },
-                        },
-                        {
-                          "multi_match" => {
-                            "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                            "fields" => ["_all"],
-                            "query" => "a",
-                            "type" => "best_fields",
-                          },
-                        },
-                      ],
-                    },
-                  },
+                  "query" => build_combined_match_query(query: "a"),
                 ],
               },
             },
@@ -225,50 +185,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         expect(query.query.to_hash).to eq(
           "bool" => {
             "must" => [
-              {
-                "bool" => {
-                  "should" => [
-                    {
-                      "multi_match" => {
-                        "boost" => 1,
-                        "fields" => ["_all"],
-                        "query" => "a",
-                        "type" => "phrase",
-                      },
-                    },
-                    {
-                      "multi_match" => {
-                        "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                        "fields" => ["_all"],
-                        "query" => "a",
-                        "type" => "best_fields",
-                      },
-                    },
-                  ],
-                },
-              },
-              {
-                "bool" => {
-                  "should" => [
-                    {
-                      "multi_match" => {
-                        "boost" => 1,
-                        "fields" => ["_all"],
-                        "query" => "b",
-                        "type" => "phrase",
-                      },
-                    },
-                    {
-                      "multi_match" => {
-                        "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                        "fields" => ["_all"],
-                        "query" => "b",
-                        "type" => "best_fields",
-                      },
-                    },
-                  ],
-                },
-              },
+              build_combined_match_query(query: "a"),
+              build_combined_match_query(query: "b"),
             ],
           },
         )
@@ -287,53 +205,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "bool" => {
                 "_cache" => true,
                 "must_not" => [
-                  "query" => {
-                    "bool" => {
-                      "should" => [
-                        {
-                          "multi_match" => {
-                            "boost" => 1,
-                            "fields" => ["_all"],
-                            "query" => "b",
-                            "type" => "phrase",
-                          },
-                        },
-                        {
-                          "multi_match" => {
-                            "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                            "fields" => ["_all"],
-                            "query" => "b",
-                            "type" => "best_fields",
-                          },
-                        },
-                      ],
-                    },
-                  },
+                  "query" => build_combined_match_query(query: "b"),
                 ],
               },
             },
-            "query" => {
-              "bool" => {
-                "should" => [
-                  {
-                    "multi_match" => {
-                      "boost" => 1,
-                      "fields" => ["_all"],
-                      "query" => "a",
-                      "type" => "phrase",
-                    },
-                  },
-                  {
-                    "multi_match" => {
-                      "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                      "fields" => ["_all"],
-                      "query" => "a",
-                      "type" => "best_fields",
-                    },
-                  },
-                ],
-              },
-            },
+            "query" => build_combined_match_query(query: "a"),
           },
         )
       end
@@ -349,28 +225,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns multi_match query with phrase type" do
-        expect(query.query.to_hash).to eq(
-          "bool" => {
-            "should" => [
-              {
-                "multi_match" => {
-                  "boost" => 1,
-                  "fields" => matchable_fields,
-                  "query" => "a",
-                  "type" => "phrase",
-                },
-              },
-              {
-                "multi_match" => {
-                  "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                  "fields" => matchable_fields,
-                  "query" => "a",
-                  "type" => "best_fields",
-                },
-              },
-            ],
-          },
-        )
+        expect(query.query.to_hash).to eq(build_combined_match_query(fields: matchable_fields, query: "a"))
       end
     end
 
@@ -488,28 +343,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        expect(query.query.to_hash).to eq(
-          "bool" => {
-            "should" => [
-              {
-                "multi_match" => {
-                  "boost" => 1,
-                  "fields" => ["_all"],
-                  "query" => 'tag\:a',
-                  "type" => "phrase",
-                },
-              },
-              {
-                "multi_match" => {
-                  "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                  "fields" => ["_all"],
-                  "query" => 'tag\:a',
-                  "type" => "best_fields",
-                },
-              },
-            ],
-          },
-        )
+        expect(query.query.to_hash).to eq(build_combined_match_query(query: 'tag\:a'))
       end
     end
 
@@ -519,28 +353,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        expect(query.query.to_hash).to eq(
-          "bool" => {
-            "should" => [
-              {
-                "multi_match" => {
-                  "boost" => 1,
-                  "fields" => ["_all"],
-                  "query" => "tag:a",
-                  "type" => "phrase",
-                },
-              },
-              {
-                "multi_match" => {
-                  "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                  "fields" => ["_all"],
-                  "query" => "tag:a",
-                  "type" => "best_fields",
-                },
-              },
-            ],
-          },
-        )
+        expect(query.query.to_hash).to eq(build_combined_match_query(query: "tag:a"))
       end
     end
 
@@ -590,28 +403,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "tag" => "b",
               },
             },
-            "query" => {
-              "bool" => {
-                "should" => [
-                  {
-                    "multi_match" => {
-                      "boost" => 1,
-                      "fields" => ["_all"],
-                      "query" => "a",
-                      "type" => "phrase",
-                    },
-                  },
-                  {
-                    "multi_match" => {
-                      "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                      "fields" => ["_all"],
-                      "query" => "a",
-                      "type" => "best_fields",
-                    },
-                  },
-                ],
-              },
-            },
+            "query" => build_combined_match_query(query: "a"),
           },
         )
       end
@@ -626,50 +418,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         expect(query.query.to_hash).to eq(
           "bool" => {
             "should" => [
-              {
-                "bool" => {
-                  "should" => [
-                    {
-                      "multi_match" => {
-                        "boost" => 1,
-                        "fields" => ["_all"],
-                        "query" => "a",
-                        "type" => "phrase",
-                      },
-                    },
-                    {
-                      "multi_match" => {
-                        "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                        "fields" => ["_all"],
-                        "query" => "a",
-                        "type" => "best_fields",
-                      },
-                    },
-                  ],
-                },
-              },
-              {
-                "bool" => {
-                  "should" => [
-                    {
-                      "multi_match" => {
-                        "boost" => 1,
-                        "fields" => ["_all"],
-                        "query" => "b",
-                        "type" => "phrase",
-                      },
-                    },
-                    {
-                      "multi_match" => {
-                        "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                        "fields" => ["_all"],
-                        "query" => "b",
-                        "type" => "best_fields",
-                      },
-                    },
-                  ],
-                },
-              },
+              build_combined_match_query(query: "a"),
+              build_combined_match_query(query: "b"),
             ],
           },
         )
@@ -929,28 +679,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                   },
                 },
               },
-              {
-                "bool" => {
-                  "should" => [
-                    {
-                      "multi_match" => {
-                        "boost" => 1,
-                        "fields" => ["_all"],
-                        "query" => "Ruby",
-                        "type" => "phrase",
-                      },
-                    },
-                    {
-                      "multi_match" => {
-                        "boost" => Qiita::Elasticsearch::MatchableToken::RELATIVE_BEST_FIELDS_QUERY_WEIGHT,
-                        "fields" => ["_all"],
-                        "query" => "Ruby",
-                        "type" => "best_fields",
-                      },
-                    },
-                  ],
-                },
-              },
+              build_combined_match_query(query: "Ruby"),
             ],
           },
         )

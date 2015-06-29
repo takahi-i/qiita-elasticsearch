@@ -3,6 +3,8 @@ if ENV["CI"]
   CodeClimate::TestReporter.start
 end
 
+require File.expand_path("../qiita/elasticsearch/spec_helper", __FILE__)
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
