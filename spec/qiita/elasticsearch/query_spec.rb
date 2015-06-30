@@ -1,6 +1,8 @@
 require "qiita/elasticsearch/query"
 
 RSpec.describe Qiita::Elasticsearch::Query do
+  include Qiita::Elasticsearch::SpecHelper
+
   let(:query) do
     query_builder.build(query_string)
   end
@@ -39,11 +41,7 @@ RSpec.describe Qiita::Elasticsearch::Query do
                 ],
               },
             },
-            "query" => {
-              "match" => {
-                "_all" => "test",
-              },
-            },
+            "query" => build_combined_match_query(query: "test"),
           },
         },
         "sort" => [{ "created_at" => "desc" }, "_score"],
@@ -58,11 +56,7 @@ RSpec.describe Qiita::Elasticsearch::Query do
 
     it "deletes given field token and returns a new query" do
       is_expected.to eq(
-        "query" => {
-          "match" => {
-            "_all" => "test",
-          },
-        },
+        "query" => build_combined_match_query(query: "test"),
         "sort" => [{ "created_at" => "desc" }, "_score"],
       )
     end
@@ -262,11 +256,7 @@ RSpec.describe Qiita::Elasticsearch::Query do
                 "tag" => "Ruby",
               },
             },
-            "query" => {
-              "match" => {
-                "_all" => "test",
-              },
-            },
+            "query" => build_combined_match_query(query: "test"),
           },
         },
         "sort" => [{ "created_at" => "desc" }, "_score"],

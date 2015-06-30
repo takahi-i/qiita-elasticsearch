@@ -1,6 +1,8 @@
 require "qiita/elasticsearch/query_builder"
 
 RSpec.describe Qiita::Elasticsearch::QueryBuilder do
+  include Qiita::Elasticsearch::SpecHelper
+
   describe "#build" do
     let(:downcased_fields) do
     end
@@ -80,12 +82,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a"
       end
 
-      it "returns match query" do
-        expect(query.query.to_hash).to eq(
-          "match" => {
-            "_all" => "a",
-          },
-        )
+      it "returns combined match query" do
+        expect(query.query.to_hash).to eq(build_combined_match_query(query: "a"))
       end
     end
 
@@ -94,10 +92,13 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         '"a b"'
       end
 
-      it "returns match_phrase query" do
+      it "returns multi match query with phrase type" do
         expect(query.query.to_hash).to eq(
-          "match_phrase" => {
-            "_all" => "a b",
+          "multi_match" => {
+            "boost" => 1,
+            "fields" => ["_all"],
+            "query" => "a b",
+            "type" => "phrase",
           },
         )
       end
@@ -108,7 +109,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         '-"a b"'
       end
 
-      it "returns must_not query with match_phrase query" do
+      it "returns must_not query with phrase multi match query" do
         expect(query.query.to_hash).to eq(
           "filtered" => {
             "filter" => {
@@ -117,8 +118,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "must_not" => [
                   {
                     "query" => {
-                      "match_phrase" => {
-                        "_all" => "a b",
+                      "multi_match" => {
+                        "boost" => 1,
+                        "fields" => ["_all"],
+                        "query" => "a b",
+                        "type" => "phrase",
                       },
                     },
                   },
@@ -142,6 +146,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       it "returns multi match query with phrase type" do
         expect(query.query.to_hash).to eq(
           "multi_match" => {
+            "boost" => 1,
             "fields" => matchable_fields,
             "query" => "a b",
             "type" => "phrase",
@@ -162,11 +167,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "bool" => {
                 "_cache" => true,
                 "must_not" => [
-                  "query" => {
-                    "match" => {
-                      "_all" => "a",
-                    },
-                  },
+                  "query" => build_combined_match_query(query: "a"),
                 ],
               },
             },
@@ -184,16 +185,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         expect(query.query.to_hash).to eq(
           "bool" => {
             "must" => [
-              {
-                "match" => {
-                  "_all" => "a",
-                },
-              },
-              {
-                "match" => {
-                  "_all" => "b",
-                },
-              },
+              build_combined_match_query(query: "a"),
+              build_combined_match_query(query: "b"),
             ],
           },
         )
@@ -212,19 +205,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               "bool" => {
                 "_cache" => true,
                 "must_not" => [
-                  "query" => {
-                    "match" => {
-                      "_all" => "b",
-                    },
-                  },
+                  "query" => build_combined_match_query(query: "b"),
                 ],
               },
             },
-            "query" => {
-              "match" => {
-                "_all" => "a",
-              },
-            },
+            "query" => build_combined_match_query(query: "a"),
           },
         )
       end
@@ -239,13 +224,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         "a"
       end
 
-      it "returns multi_match query" do
-        expect(query.query.to_hash).to eq(
-          "multi_match" => {
-            "fields" => matchable_fields,
-            "query" => "a",
-          },
-        )
+      it "returns multi_match query with phrase type" do
+        expect(query.query.to_hash).to eq(build_combined_match_query(fields: matchable_fields, query: "a"))
       end
     end
 
@@ -363,11 +343,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        expect(query.query.to_hash).to eq(
-          "match" => {
-            "_all" => 'tag\:a',
-          },
-        )
+        expect(query.query.to_hash).to eq(build_combined_match_query(query: 'tag\:a'))
       end
     end
 
@@ -377,11 +353,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns match query" do
-        expect(query.query.to_hash).to eq(
-          "match" => {
-            "_all" => "tag:a",
-          },
-        )
+        expect(query.query.to_hash).to eq(build_combined_match_query(query: "tag:a"))
       end
     end
 
@@ -431,11 +403,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "tag" => "b",
               },
             },
-            "query" => {
-              "match" => {
-                "_all" => "a",
-              },
-            },
+            "query" => build_combined_match_query(query: "a"),
           },
         )
       end
@@ -450,16 +418,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         expect(query.query.to_hash).to eq(
           "bool" => {
             "should" => [
-              {
-                "match" => {
-                  "_all" => "a",
-                },
-              },
-              {
-                "match" => {
-                  "_all" => "b",
-                },
-              },
+              build_combined_match_query(query: "a"),
+              build_combined_match_query(query: "b"),
             ],
           },
         )
@@ -719,11 +679,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                   },
                 },
               },
-              {
-                "match" => {
-                  "_all" => "Ruby",
-                },
-              },
+              build_combined_match_query(query: "Ruby"),
             ],
           },
         )

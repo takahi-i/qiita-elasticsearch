@@ -3,26 +3,38 @@ require "qiita/elasticsearch/token"
 module Qiita
   module Elasticsearch
     class MatchableToken < Token
+      RELATIVE_BEST_FIELDS_QUERY_WEIGHT = 0.5
+
       attr_writer :matchable_fields
 
       # @return [Hash]
       def to_hash
-        if @matchable_fields.nil?
-          {
-            quoted? ? "match_phrase" : "match" => {
-              "_all" => @term,
-            }
-          }
+        if quoted?
+          build_multi_match_query(type: "phrase")
         else
-          hash = {
-            "multi_match" => {
-              "fields" => @matchable_fields,
-              "query" => @term,
+          {
+            "bool" => {
+              "should" => [
+                build_multi_match_query(type: "phrase"),
+                build_multi_match_query(type: "best_fields", boost: RELATIVE_BEST_FIELDS_QUERY_WEIGHT),
+              ],
             },
           }
-          hash["multi_match"]["type"] = "phrase" if quoted?
-          hash
         end
+      end
+
+      private
+
+      # @return [Hash]
+      def build_multi_match_query(type: nil, boost: 1)
+        {
+          "multi_match" => {
+            "boost" => boost,
+            "fields" => @matchable_fields || ["_all"],
+            "query" => @term,
+            "type" => type,
+          },
+        }
       end
     end
   end
