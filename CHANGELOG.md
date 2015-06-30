@@ -1,3 +1,6 @@
+## 0.14.2
+- Combine phrase and best_fields queries for unquoted matchable token
+
 ## 0.14.1
 - Nest match query with "query" property in must not
 
