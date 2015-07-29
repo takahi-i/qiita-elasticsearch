@@ -14,6 +14,14 @@ module Qiita
               "archived" => true,
             },
           }
+        when code?
+          {
+            "query" => {
+              "match_phrase" => {
+                "code" => downcased_term,
+              },
+            },
+          }
         when coediting?
           {
             "term" => {
@@ -61,6 +69,10 @@ module Qiita
 
       def coediting?
         field_name == "is" && term == "coediting"
+      end
+
+      def code?
+        field_name == "code"
       end
 
       def project_type?

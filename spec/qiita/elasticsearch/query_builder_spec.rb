@@ -251,6 +251,30 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with code filter" do
+      let(:filterable_fields) do
+        ["code"]
+      end
+
+      let(:query_string) do
+        'code:"Foo::Bar"'
+      end
+
+      it "returns phrase match query" do
+        expect(query.query.to_hash).to eq(
+          "filtered" => {
+            "filter" => {
+              "query" => {
+                "match_phrase" => {
+                  "code" => "foo::bar",
+                },
+              },
+            },
+          },
+        )
+      end
+    end
+
     context "with upcased field name" do
       let(:filterable_fields) do
         ["tag"]
