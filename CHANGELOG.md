@@ -1,3 +1,6 @@
+## 0.14.3
+- Use match phrase for code search
+
 ## 0.14.2
 - Combine phrase and best_fields queries for unquoted matchable token
 
