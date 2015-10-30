@@ -15,6 +15,7 @@ RSpec.configure do |config|
   end
 
   config.disable_monkey_patching!
+  config.example_status_persistence_file_path = "spec/examples.txt"
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
   config.warnings = true
