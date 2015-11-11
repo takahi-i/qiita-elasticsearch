@@ -4,6 +4,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
   include Qiita::Elasticsearch::SpecHelper
 
   describe "#build" do
+    let(:all_fields) do
+    end
+
     let(:downcased_fields) do
     end
 
@@ -27,6 +30,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     let(:properties) do
       {
+        all_fields: all_fields,
         downcased_fields: downcased_fields,
         filterable_fields: filterable_fields,
         hierarchal_fields: hierarchal_fields,
@@ -248,6 +252,20 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
             },
           },
         )
+      end
+    end
+
+    context "with token including non-filterable field name" do
+      let(:all_fields) do
+        ["title"]
+      end
+
+      let(:query_string) do
+        "title:foo"
+      end
+
+      it "returns match query for the field" do
+        expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["title"], query: "foo"))
       end
     end
 

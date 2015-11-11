@@ -17,13 +17,15 @@ module Qiita
       # @param [String, nil] field_name Field name part
       # @param [true, fales] negative True if this term represents negative token (e.g. "-Perl")
       # @param [true, false] quoted Given term is quoted or note
+      # @param [true, false] filter True if this term should be used as filter
       # @param [String] term Term part
       # @param [String] token_string Original entire string
-      def initialize(downcased: nil, field_name: nil, negative: nil, quoted: nil, term: nil, token_string: nil)
+      def initialize(downcased: nil, field_name: nil, negative: nil, quoted: nil, filter: nil, term: nil, token_string: nil)
         @downcased = downcased
         @field_name = field_name
         @negative = negative
         @quoted = quoted
+        @filter = filter
         @term = term
         @token_string = token_string
       end
@@ -38,7 +40,7 @@ module Qiita
       end
 
       def filter?
-        !field_name.nil? || negative?
+        !!@filter || negative?
       end
 
       # @return [true, false] True if this token is for query

@@ -5,6 +5,7 @@ require "qiita/elasticsearch/query"
 module Qiita
   module Elasticsearch
     class QueryBuilder
+      # @param [Array<String>, nil] all_fields
       # @param [Array<String>, nil] date_fields
       # @param [Array<String>, nil] downcased_fields
       # @param [Array<String>, nil] filterable_fields
@@ -12,7 +13,8 @@ module Qiita
       # @param [Array<String>, nil] int_fields
       # @param [Array<String>, nil] matchable_fields
       # @param [String, nil] time_zone
-      def initialize(date_fields: nil, downcased_fields: nil, hierarchal_fields: nil, filterable_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil, filterable_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
+        @all_fields = all_fields
         @date_fields = date_fields
         @downcased_fields = downcased_fields
         @filterable_fields = filterable_fields
@@ -40,6 +42,7 @@ module Qiita
 
       def tokenizer
         @tokenizer ||= Tokenizer.new(
+          all_fields: @all_fields,
           date_fields: @date_fields,
           downcased_fields: @downcased_fields,
           filterable_fields: @filterable_fields,

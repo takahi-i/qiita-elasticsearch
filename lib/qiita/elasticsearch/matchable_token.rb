@@ -38,7 +38,9 @@ module Qiita
       end
 
       def matchable_fields
-        if @matchable_fields && !@matchable_fields.empty?
+        if field_name
+          [field_name]
+        elsif @matchable_fields && !@matchable_fields.empty?
           @matchable_fields
         else
           ["_all"]

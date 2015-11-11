@@ -28,6 +28,7 @@ module Qiita
         )
       /x
 
+      # @param [Array<String>, nil] all_fields
       # @param [Array<String>, nil] date_fields
       # @param [Array<String>, nil] downcased_fields
       # @param [Array<String>, nil] filterable_fields
@@ -35,13 +36,14 @@ module Qiita
       # @param [Array<String>, nil] int_fields
       # @param [Array<String>, nil] matchable_fields
       # @param [String, nil] time_zone
-      def initialize(date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
         @date_fields = (date_fields || DEFAULT_DATE_FIELDS) | EXTRA_DATE_FIELDS
         @downcased_fields = downcased_fields || DEFAULT_DOWNCASED_FIELDS
         @filterable_fields = (filterable_fields || DEFAULT_FILTERABLE_FIELDS) | EXTRA_FILTERABLE_FIELDS
         @hierarchal_fields = hierarchal_fields || DEFAULT_HIERARCHAL_FIELDS
         @int_fields = int_fields || DEFAULT_INT_FIELDS
         @matchable_fields = matchable_fields || DEFAULT_MATCHABLE_FIELDS
+        @all_fields = aggregate_all_fields(all_fields)
         @time_zone = time_zone
       end
 
@@ -50,7 +52,7 @@ module Qiita
       def tokenize(query_string)
         query_string.scan(TOKEN_PATTERN).map do |token_string, minus, field_name, quoted_term, term|
           term ||= quoted_term
-          if !field_name.nil? && !@filterable_fields.include?(field_name)
+          if !field_name.nil? && !@all_fields.include?(field_name)
             term = "#{field_name}:#{term}"
             field_name = nil
           end
@@ -59,6 +61,7 @@ module Qiita
             field_name: field_name,
             negative: !minus.nil?,
             quoted: !quoted_term.nil?,
+            filter: @filterable_fields.include?(field_name),
             term: term,
             token_string: token_string,
           )
@@ -69,6 +72,20 @@ module Qiita
       end
 
       private
+
+      def aggregate_all_fields(base)
+        fields = [
+          base,
+          @date_fields,
+          @downcased_fields,
+          @filterable_fields,
+          @hierarchal_fields,
+          @int_fields,
+          @matchable_fields
+        ].flatten.compact
+
+        fields.map { |field| field.sub(/\^\d+\z/, "") }.uniq
+      end
 
       def token_class(field_name)
         case
