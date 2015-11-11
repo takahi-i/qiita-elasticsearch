@@ -12,6 +12,7 @@ module Qiita
       DEFAULT_FILTERABLE_FIELDS = []
       DEFAULT_HIERARCHAL_FIELDS = []
       DEFAULT_INT_FIELDS = []
+      DEFAULT_MATCHABLE_FIELDS = []
       EXTRA_DATE_FIELDS = %w(created updated)
       EXTRA_FILTERABLE_FIELDS = %w(created is sort updated)
 
@@ -40,7 +41,7 @@ module Qiita
         @filterable_fields = (filterable_fields || DEFAULT_FILTERABLE_FIELDS) | EXTRA_FILTERABLE_FIELDS
         @hierarchal_fields = hierarchal_fields || DEFAULT_HIERARCHAL_FIELDS
         @int_fields = int_fields || DEFAULT_INT_FIELDS
-        @matchable_fields = matchable_fields
+        @matchable_fields = matchable_fields || DEFAULT_MATCHABLE_FIELDS
         @time_zone = time_zone
       end
 

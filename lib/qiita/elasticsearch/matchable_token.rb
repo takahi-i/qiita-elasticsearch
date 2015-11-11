@@ -30,11 +30,19 @@ module Qiita
         {
           "multi_match" => {
             "boost" => boost,
-            "fields" => @matchable_fields || ["_all"],
+            "fields" => matchable_fields,
             "query" => @term,
             "type" => type,
           },
         }
+      end
+
+      def matchable_fields
+        if @matchable_fields && !@matchable_fields.empty?
+          @matchable_fields
+        else
+          ["_all"]
+        end
       end
     end
   end
