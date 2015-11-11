@@ -15,8 +15,8 @@ module Qiita
 
       # @param [true, false] downcased True if given term must be downcased on query representation
       # @param [String, nil] field_name Field name part
-      # @param [true, fales] negative True if this term represents negative token (e.g. "-Perl")
-      # @param [true, false] quoted Given term is quoted or note
+      # @param [true, false] negative True if this term represents negative token (e.g. "-Perl")
+      # @param [true, false] quoted Given term is quoted or not
       # @param [true, false] filter True if this term should be used as filter
       # @param [String] term Term part
       # @param [String] token_string Original entire string
