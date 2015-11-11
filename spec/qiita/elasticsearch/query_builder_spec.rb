@@ -215,7 +215,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
-    context "with fields property" do
+    context "with matchable_fields property" do
       let(:matchable_fields) do
         ["tag"]
       end
