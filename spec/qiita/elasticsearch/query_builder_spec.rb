@@ -16,7 +16,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:hierarchal_fields) do
     end
 
-    let(:matchable_fields) do
+    let(:default_fields) do
     end
 
     let(:int_fields) do
@@ -34,7 +34,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         downcased_fields: downcased_fields,
         filterable_fields: filterable_fields,
         hierarchal_fields: hierarchal_fields,
-        matchable_fields: matchable_fields,
+        default_fields: default_fields,
         int_fields: int_fields,
         date_fields: date_fields,
         time_zone: time_zone,
@@ -138,8 +138,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
-    context "with double-quoted token with matchable field names" do
-      let(:matchable_fields) do
+    context "with double-quoted token with default field names" do
+      let(:default_fields) do
         ["title"]
       end
 
@@ -151,7 +151,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         expect(query.query.to_hash).to eq(
           "multi_match" => {
             "boost" => 1,
-            "fields" => matchable_fields,
+            "fields" => default_fields,
             "query" => "a b",
             "type" => "phrase",
           },
@@ -219,8 +219,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
-    context "with matchable_fields property" do
-      let(:matchable_fields) do
+    context "with default_fields property" do
+      let(:default_fields) do
         ["tag"]
       end
 
@@ -229,7 +229,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
 
       it "returns multi_match query with phrase type" do
-        expect(query.query.to_hash).to eq(build_combined_match_query(fields: matchable_fields, query: "a"))
+        expect(query.query.to_hash).to eq(build_combined_match_query(fields: default_fields, query: "a"))
       end
     end
 

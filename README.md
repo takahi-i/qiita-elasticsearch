@@ -23,11 +23,11 @@ query_builder.build("a OR b")
 #=> {"bool"=>{"should"=>[{"match"=>{"_all"=>"a"}}, {"match"=>{"_all"=>"b"}}]}}
 ```
 
-### matchable_fields
-Pass `:matchable_fields` option to tell matchable field names (default: `_all`).
+### default_fields
+Pass `:default_fields` option to tell default (matchable) field names (default: `_all`).
 
 ```rb
-query_builder = Qiita::Elasticsearch::QueryBuilder.new(matchable_fields: ["body", "title"])
+query_builder = Qiita::Elasticsearch::QueryBuilder.new(default_fields: ["body", "title"])
 
 query_builder.build("a")
 #=> {"multi_match"=>{"fields"=>["body", "title"], "query"=>"a"}}

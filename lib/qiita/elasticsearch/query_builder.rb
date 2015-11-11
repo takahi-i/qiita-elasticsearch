@@ -11,16 +11,16 @@ module Qiita
       # @param [Array<String>, nil] filterable_fields
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] int_fields
-      # @param [Array<String>, nil] matchable_fields
+      # @param [Array<String>, nil] default_fields
       # @param [String, nil] time_zone
-      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil, filterable_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil, filterable_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil)
         @all_fields = all_fields
         @date_fields = date_fields
         @downcased_fields = downcased_fields
         @filterable_fields = filterable_fields
         @hierarchal_fields = hierarchal_fields
         @int_fields = int_fields
-        @matchable_fields = matchable_fields
+        @default_fields = default_fields
         @time_zone = time_zone
       end
 
@@ -33,7 +33,7 @@ module Qiita
           filterable_fields: @filterable_fields,
           hierarchal_fields: @hierarchal_fields,
           int_fields: @int_fields,
-          matchable_fields: @matchable_fields,
+          default_fields: @default_fields,
           time_zone: @time_zone,
         )
       end
@@ -48,7 +48,7 @@ module Qiita
           filterable_fields: @filterable_fields,
           hierarchal_fields: @hierarchal_fields,
           int_fields: @int_fields,
-          matchable_fields: @matchable_fields,
+          default_fields: @default_fields,
           time_zone: @time_zone,
         )
       end

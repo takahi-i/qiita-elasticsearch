@@ -5,7 +5,7 @@ module Qiita
     class MatchableToken < Token
       RELATIVE_BEST_FIELDS_QUERY_WEIGHT = 0.5
 
-      attr_writer :matchable_fields
+      attr_writer :default_fields
 
       # @return [Hash]
       def to_hash
@@ -40,8 +40,8 @@ module Qiita
       def matchable_fields
         if field_name
           [field_name]
-        elsif @matchable_fields && !@matchable_fields.empty?
-          @matchable_fields
+        elsif @default_fields && !@default_fields.empty?
+          @default_fields
         else
           ["_all"]
         end

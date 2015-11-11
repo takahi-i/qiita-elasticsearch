@@ -12,7 +12,7 @@ module Qiita
       DEFAULT_FILTERABLE_FIELDS = []
       DEFAULT_HIERARCHAL_FIELDS = []
       DEFAULT_INT_FIELDS = []
-      DEFAULT_MATCHABLE_FIELDS = []
+      DEFAULT_DEFAULT_FIELDS = []
       EXTRA_DATE_FIELDS = %w(created updated)
       EXTRA_FILTERABLE_FIELDS = %w(created is sort updated)
 
@@ -34,15 +34,15 @@ module Qiita
       # @param [Array<String>, nil] filterable_fields
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] int_fields
-      # @param [Array<String>, nil] matchable_fields
+      # @param [Array<String>, nil] default_fields
       # @param [String, nil] time_zone
-      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, matchable_fields: nil, time_zone: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil)
         @date_fields = (date_fields || DEFAULT_DATE_FIELDS) | EXTRA_DATE_FIELDS
         @downcased_fields = downcased_fields || DEFAULT_DOWNCASED_FIELDS
         @filterable_fields = (filterable_fields || DEFAULT_FILTERABLE_FIELDS) | EXTRA_FILTERABLE_FIELDS
         @hierarchal_fields = hierarchal_fields || DEFAULT_HIERARCHAL_FIELDS
         @int_fields = int_fields || DEFAULT_INT_FIELDS
-        @matchable_fields = matchable_fields || DEFAULT_MATCHABLE_FIELDS
+        @default_fields = default_fields || DEFAULT_DEFAULT_FIELDS
         @all_fields = aggregate_all_fields(all_fields)
         @time_zone = time_zone
       end
@@ -65,7 +65,7 @@ module Qiita
             term: term,
             token_string: token_string,
           )
-          token.matchable_fields = @matchable_fields if token.is_a?(MatchableToken)
+          token.default_fields = @default_fields if token.is_a?(MatchableToken)
           token.time_zone = @time_zone if token.is_a?(DateToken)
           token
         end
@@ -81,7 +81,7 @@ module Qiita
           @filterable_fields,
           @hierarchal_fields,
           @int_fields,
-          @matchable_fields
+          @default_fields
         ].flatten.compact
 
         fields.map { |field| field.sub(/\^\d+\z/, "") }.uniq
