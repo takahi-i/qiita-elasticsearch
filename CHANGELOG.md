@@ -1,3 +1,6 @@
+## 0.16.0
+- Support groups filter query
+
 ## 0.14.3
 - Use match phrase for code search
 
