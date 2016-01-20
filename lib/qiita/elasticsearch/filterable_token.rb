@@ -28,6 +28,13 @@ module Qiita
               "edit_permission" => EDIT_PERMISSION_COEDITING,
             },
           }
+        when group?
+          {
+            "terms" => {
+              "execution" => "or",
+              "group_id" => group_ids,
+            }
+          }
         when type?
           {
             "type" => {
@@ -73,6 +80,34 @@ module Qiita
 
       def code?
         field_name == "code"
+      end
+
+      # @private
+      # @note This is for group filter query (e.g. "group:dev", "group:dev,sales")
+      # @return [Array<Integer>]
+      def group_ids
+        groups.pluck(:id)
+      end
+
+      # @private
+      # @return [Array<String>]
+      def group_url_names
+        if group?
+          term.split(",")
+        else
+          []
+        end
+      end
+
+      def group?
+        field_name == "group"
+      end
+
+      # @private
+      # @note This method depends on the existence of `Group` ActiveRecord model class.
+      # @return [ActiveRecord::Relation]
+      def groups
+        ::Group.where(url_name: group_url_names)
       end
 
       def project_type?

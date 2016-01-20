@@ -1069,6 +1069,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       let(:int_fields) do
         ["likes"]
       end
+
       let(:query_string) do
         "likes:>3"
       end
@@ -1081,6 +1082,38 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                 "lgtms" => {
                   "gt" => 3,
                 },
+              },
+            },
+          },
+        )
+      end
+    end
+
+    context "with group:dev" do
+      before do
+        allow_any_instance_of(Qiita::Elasticsearch::FilterableToken).to receive(:group_ids)
+          .and_return(dummy_group_ids)
+      end
+
+      let(:dummy_group_ids) do
+        [1, 2, 3]
+      end
+
+      let(:filterable_fields) do
+        ["group"]
+      end
+
+      let(:query_string) do
+        "group:dev"
+      end
+
+      it "returns query to filter documents by their group_id values" do
+        expect(query.query).to eq(
+          "filtered" => {
+            "filter" => {
+              "terms" => {
+                "execution" => "or",
+                "group_id" => dummy_group_ids,
               },
             },
           },
