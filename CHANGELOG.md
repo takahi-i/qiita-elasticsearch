@@ -1,6 +1,11 @@
 ## 0.16.0
 - Support groups filter query
 
+## 0.15.0
+- Use `match` query for non-filterable `field:value` input
+- Add `:all_fields` option to `QueryBuilder#initialize` to distinguish `field:value` input and non-field input including a `:`
+- Rename `:matchable_fields` option to `:default_fields` in `QueryBuilder#initialize`
+
 ## 0.14.3
 - Use match phrase for code search
 
