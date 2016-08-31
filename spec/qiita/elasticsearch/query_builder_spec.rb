@@ -269,6 +269,30 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
+    context "with token including user field_symbol" do
+      let(:all_fields) do
+        ["user"]
+      end
+
+      let(:query_string) do
+        "@yaotti"
+      end
+    end
+
+    context "with token including tag field_symbol" do
+      let(:all_fields) do
+        ["tag"]
+      end
+
+      let(:query_string) do
+        "#qiita"
+      end
+
+      it "returns match query for the field" do
+        expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["tag"], query: "qiita"))
+      end
+    end
+
     context "with code filter" do
       let(:filterable_fields) do
         ["code"]

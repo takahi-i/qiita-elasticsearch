@@ -19,7 +19,13 @@ module Qiita
       TOKEN_PATTERN = /
         (?<token_string>
           (?<minus>-)?
-          (?:(?<field_name>\w+):)?
+          (?:
+            (?:
+              (?<field_name>\w+):
+              |
+              (?<field_symbol>[@\#])
+            )
+          )?
           (?:
             (?:"(?<quoted_term>.*?)(?<!\\)")
             |
@@ -50,8 +56,16 @@ module Qiita
       # @param [String] query_string Raw query string
       # @return [Array<Qiita::Elasticsearch::Token>]
       def tokenize(query_string)
-        query_string.scan(TOKEN_PATTERN).map do |token_string, minus, field_name, quoted_term, term|
+        query_string.scan(TOKEN_PATTERN).map do |token_string, minus, field_name, field_symbol, quoted_term, term| # rubocop:disable Metrics/ParameterLists
           term ||= quoted_term
+
+          case field_symbol
+          when "@"
+            field_name = "user"
+          when "#"
+            field_name = "tag"
+          end
+
           if !field_name.nil? && !@all_fields.include?(field_name)
             term = "#{field_name}:#{term}"
             field_name = nil
