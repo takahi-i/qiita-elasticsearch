@@ -3,6 +3,7 @@ require "qiita/elasticsearch/filterable_token"
 require "qiita/elasticsearch/hierarchal_token"
 require "qiita/elasticsearch/matchable_token"
 require "qiita/elasticsearch/int_token"
+require "qiita/elasticsearch/range_token"
 
 module Qiita
   module Elasticsearch
@@ -15,6 +16,7 @@ module Qiita
       DEFAULT_DEFAULT_FIELDS = []
       EXTRA_DATE_FIELDS = %w(created updated)
       EXTRA_FILTERABLE_FIELDS = %w(created is sort updated)
+      DEFAULT_MATCHABLE_OPTIONS = {}
 
       TOKEN_PATTERN = /
         (?<token_string>
@@ -35,14 +37,16 @@ module Qiita
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] int_fields
       # @param [Array<String>, nil] default_fields
+      # @param [Hash] matchable_options Optional search parameters for MatchableToken
       # @param [String, nil] time_zone
-      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil, matchable_options: nil)
         @date_fields = (date_fields || DEFAULT_DATE_FIELDS) | EXTRA_DATE_FIELDS
         @downcased_fields = downcased_fields || DEFAULT_DOWNCASED_FIELDS
         @filterable_fields = (filterable_fields || DEFAULT_FILTERABLE_FIELDS) | EXTRA_FILTERABLE_FIELDS
         @hierarchal_fields = hierarchal_fields || DEFAULT_HIERARCHAL_FIELDS
         @int_fields = int_fields || DEFAULT_INT_FIELDS
         @default_fields = default_fields || DEFAULT_DEFAULT_FIELDS
+        @matchable_options = matchable_options || DEFAULT_MATCHABLE_OPTIONS
         @all_fields = aggregate_all_fields(all_fields)
         @time_zone = time_zone
       end
@@ -65,6 +69,7 @@ module Qiita
             term: term,
             token_string: token_string,
           )
+          token.options = @matchable_options if token.is_a?(MatchableToken)
           token.default_fields = @default_fields if token.is_a?(MatchableToken)
           token.time_zone = @time_zone if token.is_a?(DateToken)
           token

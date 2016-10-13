@@ -28,6 +28,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:time_zone) do
     end
 
+    let(:matchable_options) do
+    end
+
     let(:properties) do
       {
         all_fields: all_fields,
@@ -38,6 +41,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         int_fields: int_fields,
         date_fields: date_fields,
         time_zone: time_zone,
+        matchable_options: matchable_options,
       }
     end
 
@@ -88,6 +92,45 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "returns combined match query" do
         expect(query.query.to_hash).to eq(build_combined_match_query(query: "a"))
+      end
+    end
+
+    context "with matchable option" do
+      let(:matchable_options) do
+        {
+          "operator" =>  "and"
+        }
+      end
+
+      let(:query_string) do
+        "a"
+      end
+
+      it "returns query with specified matchable option" do
+        expect(query.query.to_hash).to eq(
+          "bool" => {
+            "should" => [
+              {
+                "multi_match" => {
+                  "boost" => 1,
+                  "fields" => ["_all"],
+                  "query" => "a",
+                  "type" => "phrase",
+                  "operator" => "and"
+                }
+              },
+              {
+                "multi_match" => {
+                  "boost" => 0.5,
+                  "fields" => ["_all"],
+                  "query" => "a",
+                  "type" => "best_fields",
+                  "operator" => "and"
+                }
+              }
+            ]
+          }
+        )
       end
     end
 

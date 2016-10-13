@@ -27,14 +27,14 @@ module Qiita
 
       # @return [Hash]
       def build_multi_match_query(type: nil, boost: 1)
-        {
-          "multi_match" => {
-            "boost" => boost,
-            "fields" => matchable_fields,
-            "query" => @term,
-            "type" => type,
-          },
+        query = {
+          "boost" => boost,
+          "fields" => matchable_fields,
+          "query" => @term,
+          "type" => type,
         }
+        query.merge!(options)
+        { "multi_match" => query }
       end
 
       def matchable_fields

@@ -13,6 +13,9 @@ module Qiita
       #                        term
       attr_reader :term
 
+      # @return [Hash]
+      attr_accessor :options
+
       # @param [true, false] downcased True if given term must be downcased on query representation
       # @param [String, nil] field_name Field name part
       # @param [true, false] negative True if this term represents negative token (e.g. "-Perl")
@@ -20,7 +23,8 @@ module Qiita
       # @param [true, false] filter True if this term should be used as filter
       # @param [String] term Term part
       # @param [String] token_string Original entire string
-      def initialize(downcased: nil, field_name: nil, negative: nil, quoted: nil, filter: nil, term: nil, token_string: nil)
+      # @param [Hash] options Optional search parameters
+      def initialize(downcased: nil, field_name: nil, negative: nil, quoted: nil, filter: nil, term: nil, token_string: nil, options: nil)
         @downcased = downcased
         @field_name = field_name
         @negative = negative
@@ -28,6 +32,7 @@ module Qiita
         @filter = filter
         @term = term
         @token_string = token_string
+        @options = options
       end
 
       # @return [true, false] True if its term must be treated with downcased

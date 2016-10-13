@@ -12,8 +12,10 @@ module Qiita
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] int_fields
       # @param [Array<String>, nil] default_fields
+      # @param [Hash] matchable_options
       # @param [String, nil] time_zone
-      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil, filterable_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil,
+                     filterable_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil, matchable_options: nil)
         @all_fields = all_fields
         @date_fields = date_fields
         @downcased_fields = downcased_fields
@@ -22,6 +24,7 @@ module Qiita
         @int_fields = int_fields
         @default_fields = default_fields
         @time_zone = time_zone
+        @matchable_options = matchable_options
       end
 
       # @param [String] query_string Raw query string
@@ -50,6 +53,7 @@ module Qiita
           int_fields: @int_fields,
           default_fields: @default_fields,
           time_zone: @time_zone,
+          matchable_options: @matchable_options,
         )
       end
     end
