@@ -1,6 +1,6 @@
 if ENV["CI"]
-  require "codeclimate-test-reporter"
-  CodeClimate::TestReporter.start
+  require "simplecov"
+  SimpleCov.start
 end
 
 require File.expand_path("../qiita/elasticsearch/spec_helper", __FILE__)
