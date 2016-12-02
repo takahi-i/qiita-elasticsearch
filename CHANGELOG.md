@@ -1,3 +1,8 @@
+## 0.17.0
+
+* Add support for relative date expression in date fields
+* Enable specifying optional query parameters in MatchableToken
+
 ## 0.16.0
 - Support groups filter query
 
