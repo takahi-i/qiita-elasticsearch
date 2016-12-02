@@ -772,130 +772,166 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     end
 
     context "with date field name" do
-      context "and no range operand" do
-        context "and query is YYYY" do
+      context "and absolute date expression" do
+        context "and no range operand" do
+          context "and query is YYYY" do
+            let(:query_string) do
+              "created:2015"
+            end
+
+            it "returns range filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "gte" => "2015-01-01",
+                        "lt" => "2016-01-01"
+                      }
+                    },
+                  },
+                },
+              )
+            end
+          end
+
+          context "and query is YYYY-MM" do
+            let(:query_string) do
+              "created:2015-04"
+            end
+
+            it "returns range filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "gte" => "2015-04-01",
+                        "lt" => "2015-05-01"
+                      }
+                    },
+                  },
+                },
+              )
+            end
+          end
+
+          context "and query is YYYY-MM-DD" do
+            let(:query_string) do
+              "created:2015-04-17"
+            end
+
+            it "returns range filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "gte" => "2015-04-17",
+                        "lt" => "2015-04-18"
+                      }
+                    },
+                  },
+                },
+              )
+            end
+          end
+
+          context "and time_zone" do
+            let(:time_zone) do
+              "+09:00"
+            end
+
+            let(:query_string) do
+              "created:2015-04-17"
+            end
+
+            it "returns range filter with time_zone" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "gte" => "2015-04-17",
+                        "lt" => "2015-04-18",
+                        "time_zone" => time_zone,
+                      }
+                    },
+                  },
+                },
+              )
+            end
+          end
+        end
+
+        context "and single operand" do
           let(:query_string) do
-            "created:2015"
+            "created:<2015-04"
           end
 
           it "returns range filter" do
-            expect(query.query.to_hash).to eq(
-              "filtered" => {
-                "filter" => {
-                  "range" => {
-                    "created_at" => {
-                      "gte" => "2015-01-01",
-                      "lt" => "2016-01-01"
-                    }
-                  },
-                },
-              },
-            )
-          end
-        end
-
-        context "and query is YYYY-MM" do
-          let(:query_string) do
-            "created:2015-04"
-          end
-
-          it "returns range filter" do
-            expect(query.query.to_hash).to eq(
-              "filtered" => {
-                "filter" => {
-                  "range" => {
-                    "created_at" => {
-                      "gte" => "2015-04-01",
-                      "lt" => "2015-05-01"
-                    }
-                  },
-                },
-              },
-            )
-          end
-        end
-
-        context "and query is YYYY-MM-DD" do
-          let(:query_string) do
-            "created:2015-04-17"
-          end
-
-          it "returns range filter" do
-            expect(query.query.to_hash).to eq(
-              "filtered" => {
-                "filter" => {
-                  "range" => {
-                    "created_at" => {
-                      "gte" => "2015-04-17",
-                      "lt" => "2015-04-18"
-                    }
-                  },
-                },
-              },
-            )
-          end
-        end
-
-        context "and time_zone" do
-          let(:time_zone) do
-            "+09:00"
-          end
-
-          let(:query_string) do
-            "created:2015-04-17"
-          end
-
-          it "returns range filter with time_zone" do
-            expect(query.query.to_hash).to eq(
-              "filtered" => {
-                "filter" => {
-                  "range" => {
-                    "created_at" => {
-                      "gte" => "2015-04-17",
-                      "lt" => "2015-04-18",
-                      "time_zone" => time_zone,
-                    }
-                  },
-                },
-              },
-            )
-          end
-        end
-      end
-
-      context "and single operand" do
-        let(:query_string) do
-          "created:<2015-04"
-        end
-
-        it "returns range filter" do
-          expect(query.query.to_hash).to eq(
-            "filtered" => {
-              "filter" => {
-                "range" => {
-                  "created_at" => {
-                    "lt" => "2015-04",
-                  },
-                },
-              },
-            },
-          )
-        end
-
-        context "and time_zone" do
-          let(:time_zone) do
-            "+09:00"
-          end
-
-          it "returns range filter with time_zone" do
             expect(query.query.to_hash).to eq(
               "filtered" => {
                 "filter" => {
                   "range" => {
                     "created_at" => {
                       "lt" => "2015-04",
-                      "time_zone" => time_zone,
                     },
+                  },
+                },
+              },
+            )
+          end
+
+          context "and time_zone" do
+            let(:time_zone) do
+              "+09:00"
+            end
+
+            it "returns range filter with time_zone" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "lt" => "2015-04",
+                        "time_zone" => time_zone,
+                      },
+                    },
+                  },
+                },
+              )
+            end
+          end
+        end
+
+        context "and multiple operands" do
+          let(:query_string) do
+            "created:>=2015-04-01 created:<=2015-04-17"
+          end
+
+          it "returns two range filters within bool filter" do
+            expect(query.query.to_hash).to eq(
+              "filtered" => {
+                "filter" => {
+                  "bool" => {
+                    "_cache" => true,
+                    "must" => [
+                      {
+                        "range" => {
+                          "created_at" => {
+                            "gte" => "2015-04-01",
+                          },
+                        },
+                      },
+                      {
+                        "range" => {
+                          "created_at" => {
+                            "lte" => "2015-04-17",
+                          },
+                        },
+                      },
+                    ],
                   },
                 },
               },
@@ -904,37 +940,217 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         end
       end
 
-      context "and multiple operands" do
-        let(:query_string) do
-          "created:>=2015-04-01 created:<=2015-04-17"
-        end
+      context "and relative date expression" do
+        context "and invalid type" do
+          let(:query_string) do
+            "created:1h"
+          end
 
-        it "returns two range filters within bool filter" do
-          expect(query.query.to_hash).to eq(
-            "filtered" => {
-              "filter" => {
-                "bool" => {
-                  "_cache" => true,
-                  "must" => [
-                    {
-                      "range" => {
-                        "created_at" => {
-                          "gte" => "2015-04-01",
-                        },
-                      },
+          it "returns null filtered query" do
+            expect(query.query.to_hash).to eq(
+              "filtered" => {
+                "filter" => {
+                  "query" => {
+                    "ids" => {
+                      "values" => [],
                     },
-                    {
-                      "range" => {
-                        "created_at" => {
-                          "lte" => "2015-04-17",
-                        },
-                      },
-                    },
-                  ],
+                  },
                 },
               },
-            },
-          )
+            )
+          end
+        end
+
+        context "and abbreviated type" do
+          context "and no range operand" do
+            let(:query_string) do
+              "created:1d"
+            end
+
+            it "returns null filtered query" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "query" => {
+                      "ids" => {
+                        "values" => [],
+                      },
+                    },
+                  },
+                },
+              )
+            end
+          end
+
+          context "and single operand" do
+            let(:query_string) do
+              "created:<2d"
+            end
+
+            it "returns range filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "lt" => "now-48h",
+                      },
+                    },
+                  },
+                },
+              )
+            end
+
+            context "and time_zone" do
+              let(:time_zone) do
+                "+09:00"
+              end
+
+              it "return query ignoring time_zone" do
+                expect(query.query.to_hash).to eq(
+                  "filtered" => {
+                    "filter" => {
+                      "range" => {
+                        "created_at" => {
+                          "lt" => "now-48h",
+                        },
+                      },
+                    },
+                  },
+                )
+              end
+            end
+          end
+
+          context "and multiple operands" do
+            let(:query_string) do
+              "created:>=2d created:<=1d"
+            end
+
+            it "returns two range filters within bool filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "bool" => {
+                      "_cache" => true,
+                      "must" => [
+                        {
+                          "range" => {
+                            "created_at" => {
+                              "gte" => "now-48h",
+                            },
+                          },
+                        },
+                        {
+                          "range" => {
+                            "created_at" => {
+                              "lte" => "now-24h",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              )
+            end
+          end
+        end
+
+        context "and expanted type" do
+          context "and no range operand" do
+            let(:query_string) do
+              "created:1day"
+            end
+
+            it "returns null filtered query" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "query" => {
+                      "ids" => {
+                        "values" => [],
+                      },
+                    },
+                  },
+                },
+              )
+            end
+          end
+
+          context "and single operand" do
+            let(:query_string) do
+              "created:<2days"
+            end
+
+            it "returns range filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "range" => {
+                      "created_at" => {
+                        "lt" => "now-48h",
+                      },
+                    },
+                  },
+                },
+              )
+            end
+
+            context "and time_zone" do
+              let(:time_zone) do
+                "+09:00"
+              end
+
+              it "return query ignoring time_zone" do
+                expect(query.query.to_hash).to eq(
+                  "filtered" => {
+                    "filter" => {
+                      "range" => {
+                        "created_at" => {
+                          "lt" => "now-48h",
+                        },
+                      },
+                    },
+                  },
+                )
+              end
+            end
+          end
+
+          context "and multiple operands" do
+            let(:query_string) do
+              "created:>=2days created:<=1day"
+            end
+
+            it "returns two range filters within bool filter" do
+              expect(query.query.to_hash).to eq(
+                "filtered" => {
+                  "filter" => {
+                    "bool" => {
+                      "_cache" => true,
+                      "must" => [
+                        {
+                          "range" => {
+                            "created_at" => {
+                              "gte" => "now-48h",
+                            },
+                          },
+                        },
+                        {
+                          "range" => {
+                            "created_at" => {
+                              "lte" => "now-24h",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              )
+            end
+          end
         end
       end
     end

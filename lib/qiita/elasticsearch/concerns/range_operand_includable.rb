@@ -8,8 +8,6 @@ module Qiita
 
         RANGE_TERM_REGEXP = /\A(?<operand>\<=|\<|\>=|\>)(?<query>.*)\z/
 
-        private
-
         # @return [String, nil]
         # @example Suppose @term is "created_at:>=2015-04-16"
         #   range_parameter #=> "gte"
@@ -23,6 +21,8 @@ module Qiita
         def range_query
           range_match[:query]
         end
+
+        private
 
         def range_match
           @range_match ||= RANGE_TERM_REGEXP.match(@term) || {}
