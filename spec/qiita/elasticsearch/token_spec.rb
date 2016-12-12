@@ -53,10 +53,18 @@ RSpec.describe Qiita::Elasticsearch::Token do
 
       context "with relative date" do
         let(:query_string) do
-          "created:>10d"
+          "created:>-10d"
         end
 
         it { should be false }
+      end
+
+      context "with relative date without minus" do
+        let(:query_string) do
+          "created:>10d"
+        end
+
+        it { should be true }
       end
     end
   end

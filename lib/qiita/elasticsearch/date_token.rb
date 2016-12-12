@@ -100,6 +100,7 @@ module Qiita
       class RelativeDateExpression < BaseDateExpression
         # @note Matches to "30d" and "30days"
         PATTERN = /\A
+          -
           (?<digit>\d+)
           (?<type>d|y|day|days|year|years)
         \z/x

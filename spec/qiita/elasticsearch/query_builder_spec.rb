@@ -943,7 +943,27 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       context "and relative date expression" do
         context "and invalid type" do
           let(:query_string) do
-            "created:1h"
+            "created:-1h"
+          end
+
+          it "returns null filtered query" do
+            expect(query.query.to_hash).to eq(
+              "filtered" => {
+                "filter" => {
+                  "query" => {
+                    "ids" => {
+                      "values" => [],
+                    },
+                  },
+                },
+              },
+            )
+          end
+        end
+
+        context "and type without minus" do
+          let(:query_string) do
+            "created:1d"
           end
 
           it "returns null filtered query" do
@@ -964,7 +984,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         context "and abbreviated type" do
           context "and no range operand" do
             let(:query_string) do
-              "created:1d"
+              "created:-1d"
             end
 
             it "returns null filtered query" do
@@ -984,7 +1004,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
           context "and single operand" do
             let(:query_string) do
-              "created:<2d"
+              "created:<-2d"
             end
 
             it "returns range filter" do
@@ -1024,7 +1044,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
           context "and multiple operands" do
             let(:query_string) do
-              "created:>=2d created:<=1d"
+              "created:>=-2d created:<=-1d"
             end
 
             it "returns two range filters within bool filter" do
@@ -1060,7 +1080,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         context "and expanted type" do
           context "and no range operand" do
             let(:query_string) do
-              "created:1day"
+              "created:-1day"
             end
 
             it "returns null filtered query" do
@@ -1080,7 +1100,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
           context "and single operand" do
             let(:query_string) do
-              "created:<2days"
+              "created:<-2days"
             end
 
             it "returns range filter" do
@@ -1120,7 +1140,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
           context "and multiple operands" do
             let(:query_string) do
-              "created:>=2days created:<=1day"
+              "created:>=-2days created:<=-1day"
             end
 
             it "returns two range filters within bool filter" do
