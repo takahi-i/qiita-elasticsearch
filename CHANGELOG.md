@@ -1,3 +1,7 @@
+## 0.18.0
+
+* Change the relative date expression format (Past date must be prefixed with `-` like `-30d`)
+
 ## 0.17.0
 
 * Add support for relative date expression in date fields
