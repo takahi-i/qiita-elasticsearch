@@ -1,3 +1,7 @@
+## 0.19.0
+
+* Introduce field alias mapping, which enables conversion of arbitrary field name in user query to Elasticsearch field names
+
 ## 0.18.0
 
 * Change the relative date expression format (Past date must be prefixed with `-` like `-30d`)
