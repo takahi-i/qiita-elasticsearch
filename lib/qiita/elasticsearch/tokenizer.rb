@@ -17,6 +17,7 @@ module Qiita
       EXTRA_DATE_FIELDS = %w(created updated)
       EXTRA_FILTERABLE_FIELDS = %w(created is sort updated)
       DEFAULT_MATCHABLE_OPTIONS = {}
+      DEFAULT_FIELD_MAPPING = {}
 
       TOKEN_PATTERN = /
         (?<token_string>
@@ -37,9 +38,10 @@ module Qiita
       # @param [Array<String>, nil] hierarchal_fields
       # @param [Array<String>, nil] int_fields
       # @param [Array<String>, nil] default_fields
-      # @param [Hash] matchable_options Optional search parameters for MatchableToken
+      # @param [Hash, nil] matchable_options Optional search parameters for MatchableToken
+      # @param [Hash, nil] field_mapping alias of fields
       # @param [String, nil] time_zone
-      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil, matchable_options: nil)
+      def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, filterable_fields: nil, hierarchal_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil, matchable_options: nil, field_mapping: nil)
         @date_fields = (date_fields || DEFAULT_DATE_FIELDS) | EXTRA_DATE_FIELDS
         @downcased_fields = downcased_fields || DEFAULT_DOWNCASED_FIELDS
         @filterable_fields = (filterable_fields || DEFAULT_FILTERABLE_FIELDS) | EXTRA_FILTERABLE_FIELDS
@@ -47,6 +49,7 @@ module Qiita
         @int_fields = int_fields || DEFAULT_INT_FIELDS
         @default_fields = default_fields || DEFAULT_DEFAULT_FIELDS
         @matchable_options = matchable_options || DEFAULT_MATCHABLE_OPTIONS
+        @field_mapping = field_mapping || DEFAULT_FIELD_MAPPING
         @all_fields = aggregate_all_fields(all_fields)
         @time_zone = time_zone
       end
@@ -56,7 +59,7 @@ module Qiita
       def tokenize(query_string)
         query_string.scan(TOKEN_PATTERN).map do |token_string, minus, field_name, quoted_term, term|
           term ||= quoted_term
-          if !field_name.nil? && !@all_fields.include?(field_name)
+          if !field_name.nil? && !@all_fields.include?(field_name) && !@field_mapping.key?(field_name)
             term = "#{field_name}:#{term}"
             field_name = nil
           end
@@ -71,6 +74,7 @@ module Qiita
           )
           token.options = @matchable_options if token.is_a?(MatchableToken)
           token.default_fields = @default_fields if token.is_a?(MatchableToken)
+          token.field_mapping = @field_mapping if token.is_a?(MatchableToken)
           token.time_zone = @time_zone if token.is_a?(DateToken)
           token
         end

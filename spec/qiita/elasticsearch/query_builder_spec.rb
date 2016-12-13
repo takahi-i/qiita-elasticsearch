@@ -31,6 +31,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:matchable_options) do
     end
 
+    let(:field_mapping) do
+    end
+
     let(:properties) do
       {
         all_fields: all_fields,
@@ -42,6 +45,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         date_fields: date_fields,
         time_zone: time_zone,
         matchable_options: matchable_options,
+        field_mapping: field_mapping,
       }
     end
 
@@ -300,15 +304,55 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with token including non-filterable field name" do
       let(:all_fields) do
-        ["title"]
+        ["title", "title.ngram"]
       end
 
-      let(:query_string) do
-        "title:foo"
+      context "and existing in all_fields" do
+        let(:query_string) do
+          "title:foo"
+        end
+
+        context "without alias field mapping" do
+          it "returns match query for the field" do
+            expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["title"], query: "foo"))
+          end
+        end
+
+        context "with alias field mapping" do
+          let(:field_mapping) do
+            {
+              "title" =>  ["title", "title.ngram"]
+            }
+          end
+
+          it "returns match query for the field" do
+            expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["title", "title.ngram"], query: "foo"))
+          end
+        end
       end
 
-      it "returns match query for the field" do
-        expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["title"], query: "foo"))
+      context "and not existing in all_fields" do
+        let(:query_string) do
+          "headline:foo"
+        end
+
+        context "without alias mapping" do
+          it "returns match query for the all fields" do
+            expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["_all"], query: "headline:foo"))
+          end
+        end
+
+        context "with alias mapping" do
+          let(:field_mapping) do
+            {
+              "headline" =>  ["title", "title.ngram"]
+            }
+          end
+
+          it "returns match query for the fields of specified alias" do
+            expect(query.query.to_hash).to eq(build_combined_match_query(fields: ["title", "title.ngram"], query: "foo"))
+          end
+        end
       end
     end
 

@@ -6,6 +6,7 @@ module Qiita
       RELATIVE_BEST_FIELDS_QUERY_WEIGHT = 0.5
 
       attr_writer :default_fields
+      attr_accessor :field_mapping
 
       # @return [Hash]
       def to_hash
@@ -27,6 +28,10 @@ module Qiita
 
       # @return [Hash]
       def build_multi_match_query(type: nil, boost: 1)
+        { "multi_match" => build_query(boost, type) }
+      end
+
+      def build_query(boost, type)
         query = {
           "boost" => boost,
           "fields" => matchable_fields,
@@ -34,17 +39,24 @@ module Qiita
           "type" => type,
         }
         query.merge!(options)
-        { "multi_match" => query }
       end
 
       def matchable_fields
         if field_name
-          [field_name]
+          target_fields
         elsif @default_fields && !@default_fields.empty?
           @default_fields
         else
           ["_all"]
         end
+      end
+
+      def target_fields
+        @target_fields ||= field_aliases ? field_aliases : [field_name]
+      end
+
+      def field_aliases
+        field_mapping[field_name]
       end
     end
   end

@@ -102,3 +102,14 @@ query_builder = Qiita::Elasticsearch::QueryBuilder.new(downcased_fields: ["tag"]
 query_builder.build("tag:Ruby")
 #=> {"filtered"=>{"filter"=>{"term"=>{"tag"=>"ruby"}}}}
 ```
+
+### field_mapping
+Pass `:field_mapping` option to search with aliases of field names.
+Users can search with alias fields which could not exist in the mapping of Elasticsearch nodes.
+
+```rb
+query_builder = Qiita::Elasticsearch::QueryBuilder.new(field_mapping: { "headline" =>  ["title", "title.ngram"]} )
+
+query_builder.build("headline:Ruby")
+#=> {"multi_match"=>{ "fields"=>["title", "title.ngram"], "query"=>"Ruby"}
+```
