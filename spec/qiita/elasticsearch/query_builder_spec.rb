@@ -34,6 +34,9 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:field_mapping) do
     end
 
+    let(:score_functions) do
+    end
+
     let(:properties) do
       {
         all_fields: all_fields,
@@ -46,6 +49,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         time_zone: time_zone,
         matchable_options: matchable_options,
         field_mapping: field_mapping,
+        score_functions: score_functions,
       }
     end
 
@@ -1440,6 +1444,39 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
               },
             },
           },
+        )
+      end
+    end
+
+    context "with score_functions option" do
+      let(:score_functions) do
+        [
+          {
+            "gauss": {
+              "created_at": {
+                "scale": "100d",
+                "offset": "100d",
+                "decay": 0.9
+              }
+            }
+          }
+        ]
+      end
+
+      let(:query_string) do
+        ""
+      end
+
+      it "returns query wrapped with specified score_function" do
+        expect(query.query.to_hash).to eq(
+          "query" => {
+            "function_score" => {
+              "query" => {
+                "match_all" => {}
+              },
+              "functions" => score_functions
+            }
+          }
         )
       end
     end

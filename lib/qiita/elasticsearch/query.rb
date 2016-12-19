@@ -23,7 +23,9 @@ module Qiita
 
       # @param [Array<Qiita::Elasticsearch::Token>] tokens
       # @param [Hash] query_builder_options For building new query from this query
-      def initialize(tokens, query_builder_options = nil)
+      # @param [Array] function_score_options list of functions for scoring hit documents
+      def initialize(tokens: nil, function_score_options: nil, query_builder_options: nil)
+        @function_score_options = function_score_options
         @query_builder_options = query_builder_options
         @tokens = tokens
       end
@@ -65,7 +67,20 @@ module Qiita
 
       # @return [Hash] query property for request body for Elasticsearch
       def query
-        Nodes::OrSeparatableNode.new(@tokens).to_hash
+        if @function_score_options
+          {
+            "query" =>
+              {
+                "function_score" =>
+                  {
+                    "query" => Nodes::OrSeparatableNode.new(@tokens).to_hash,
+                    "functions" => @function_score_options
+                  }
+              }
+          }
+        else
+          Nodes::OrSeparatableNode.new(@tokens).to_hash
+        end
       end
 
       # @return [Array] sort property for request body for Elasticsearch

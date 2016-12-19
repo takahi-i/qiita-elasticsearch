@@ -15,8 +15,10 @@ module Qiita
       # @param [String, nil] time_zone
       # @param [Hash, nil] matchable_options
       # @param [Hash, nil] field_mapping for field aliasing
+      # @param [Array, nil] score_functions
       def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil,
-                     filterable_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil, matchable_options: nil, field_mapping: nil)
+                     filterable_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil,
+                     matchable_options: nil, field_mapping: nil, score_functions: nil)
         @all_fields = all_fields
         @date_fields = date_fields
         @downcased_fields = downcased_fields
@@ -27,19 +29,23 @@ module Qiita
         @time_zone = time_zone
         @matchable_options = matchable_options
         @field_mapping = field_mapping
+        @score_functions = score_functions
       end
 
       # @param [String] query_string Raw query string
       # @return [Qiita::Elasticsearch::Query]
       def build(query_string)
         Query.new(
-          tokenizer.tokenize(query_string),
-          downcased_fields: @downcased_fields,
-          filterable_fields: @filterable_fields,
-          hierarchal_fields: @hierarchal_fields,
-          int_fields: @int_fields,
-          default_fields: @default_fields,
-          time_zone: @time_zone,
+          tokens:  tokenizer.tokenize(query_string),
+          function_score_options: @score_functions,
+          query_builder_options: {
+            downcased_fields: @downcased_fields,
+            filterable_fields: @filterable_fields,
+            hierarchal_fields: @hierarchal_fields,
+            int_fields: @int_fields,
+            default_fields: @default_fields,
+            time_zone: @time_zone
+          }
         )
       end
 
