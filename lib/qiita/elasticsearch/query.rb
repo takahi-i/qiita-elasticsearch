@@ -69,13 +69,10 @@ module Qiita
       def query
         if @function_score_options
           {
-            "query" =>
+            "function_score" =>
               {
-                "function_score" =>
-                  {
-                    "query" => Nodes::OrSeparatableNode.new(@tokens).to_hash,
-                    "functions" => @function_score_options
-                  }
+                "query" => Nodes::OrSeparatableNode.new(@tokens).to_hash,
+                "functions" => @function_score_options
               }
           }
         else

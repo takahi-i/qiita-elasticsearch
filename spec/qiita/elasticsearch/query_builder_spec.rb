@@ -1469,13 +1469,11 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
       it "returns query wrapped with specified score_function" do
         expect(query.query.to_hash).to eq(
-          "query" => {
-            "function_score" => {
-              "query" => {
-                "match_all" => {}
-              },
-              "functions" => score_functions
-            }
+          "function_score" => {
+            "query" => {
+              "match_all" => {}
+            },
+            "functions" => score_functions
           }
         )
       end
