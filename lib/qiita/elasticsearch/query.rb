@@ -68,7 +68,9 @@ module Qiita
       # @return [Hash] query property for request body for Elasticsearch
       def query
         if @function_score_options
-          @function_score_options.merge!("query" => Nodes::OrSeparatableNode.new(@tokens).to_hash)
+          {
+            "function_score" => @function_score_options.merge!("query" => Nodes::OrSeparatableNode.new(@tokens).to_hash)
+          }
         else
           Nodes::OrSeparatableNode.new(@tokens).to_hash
         end
