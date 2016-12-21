@@ -34,7 +34,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
     let(:field_mapping) do
     end
 
-    let(:score_functions) do
+    let(:function_score_options) do
     end
 
     let(:properties) do
@@ -49,7 +49,7 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         time_zone: time_zone,
         matchable_options: matchable_options,
         field_mapping: field_mapping,
-        score_functions: score_functions,
+        function_score_options: function_score_options,
       }
     end
 
@@ -1448,8 +1448,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       end
     end
 
-    context "with score_functions option" do
-      let(:score_functions) do
+    context "with function_score_options" do
+      let(:function_score_options) do
         {
           "function_score" =>
             {
@@ -1464,7 +1464,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
                       }
                     }
                   }
-                ]
+                ],
+              "score_mode": "multiply",
             }
         }
       end
@@ -1473,15 +1474,8 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
         ""
       end
 
-      it "returns query wrapped with specified score_function" do
-        expect(query.query.to_hash).to eq(
-          "function_score" => {
-            "functions" => score_functions["function_score"]["functions"]
-          },
-          "query" => {
-            "match_all" => {}
-          }
-        )
+      it "returns query wrapped with specified score_option block" do
+        expect(query.query.to_hash).to eq(function_score_options.merge!("query" => {  "match_all" => {} }))
       end
     end
   end

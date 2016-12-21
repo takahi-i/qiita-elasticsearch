@@ -15,10 +15,10 @@ module Qiita
       # @param [String, nil] time_zone
       # @param [Hash, nil] matchable_options
       # @param [Hash, nil] field_mapping for field aliasing
-      # @param [Array, nil] score_functions
+      # @param [Array, nil] function_score_options
       def initialize(all_fields: nil, date_fields: nil, downcased_fields: nil, hierarchal_fields: nil,
                      filterable_fields: nil, int_fields: nil, default_fields: nil, time_zone: nil,
-                     matchable_options: nil, field_mapping: nil, score_functions: nil)
+                     matchable_options: nil, field_mapping: nil, function_score_options: nil)
         @all_fields = all_fields
         @date_fields = date_fields
         @downcased_fields = downcased_fields
@@ -29,7 +29,7 @@ module Qiita
         @time_zone = time_zone
         @matchable_options = matchable_options
         @field_mapping = field_mapping
-        @score_functions = score_functions
+        @function_score_options = function_score_options
       end
 
       # @param [String] query_string Raw query string
@@ -37,7 +37,7 @@ module Qiita
       def build(query_string)
         Query.new(
           tokens:  tokenizer.tokenize(query_string),
-          function_score_options: @score_functions,
+          function_score_options: @function_score_options,
           query_builder_options: {
             downcased_fields: @downcased_fields,
             filterable_fields: @filterable_fields,
