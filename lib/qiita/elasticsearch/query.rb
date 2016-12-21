@@ -23,7 +23,7 @@ module Qiita
 
       # @param [Array<Qiita::Elasticsearch::Token>] tokens
       # @param [Hash] query_builder_options For building new query from this query
-      # @param [Array] function_score_options list of functions for scoring hit documents
+      # @param [Hash] function_score_options options for scoring functions
       def initialize(tokens: nil, function_score_options: nil, query_builder_options: nil)
         @function_score_options = function_score_options
         @query_builder_options = query_builder_options
@@ -68,13 +68,7 @@ module Qiita
       # @return [Hash] query property for request body for Elasticsearch
       def query
         if @function_score_options
-          {
-            "function_score" =>
-              {
-                "query" => Nodes::OrSeparatableNode.new(@tokens).to_hash,
-                "functions" => @function_score_options
-              }
-          }
+          @function_score_options.merge!("query" => Nodes::OrSeparatableNode.new(@tokens).to_hash)
         else
           Nodes::OrSeparatableNode.new(@tokens).to_hash
         end

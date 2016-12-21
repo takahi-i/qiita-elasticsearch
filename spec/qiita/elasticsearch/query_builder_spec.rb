@@ -1450,17 +1450,23 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
 
     context "with score_functions option" do
       let(:score_functions) do
-        [
-          {
-            "gauss": {
-              "created_at": {
-                "scale": "100d",
-                "offset": "100d",
-                "decay": 0.9
-              }
+        {
+          "function_score" =>
+            {
+              "functions" =>
+                [
+                  {
+                    "gauss": {
+                      "created_at": {
+                        "scale": "100d",
+                        "offset": "100d",
+                        "decay": 0.9
+                      }
+                    }
+                  }
+                ]
             }
-          }
-        ]
+        }
       end
 
       let(:query_string) do
@@ -1470,10 +1476,10 @@ RSpec.describe Qiita::Elasticsearch::QueryBuilder do
       it "returns query wrapped with specified score_function" do
         expect(query.query.to_hash).to eq(
           "function_score" => {
-            "query" => {
-              "match_all" => {}
-            },
-            "functions" => score_functions
+            "functions" => score_functions["function_score"]["functions"]
+          },
+          "query" => {
+            "match_all" => {}
           }
         )
       end
